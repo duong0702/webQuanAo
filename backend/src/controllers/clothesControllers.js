@@ -18,7 +18,11 @@ const getAllClothes = async (req, res) => {
       },
     ]);
 
-    res.status(200).json(result[0]); // facet trả về mảng -> lấy phần tử đầu
+    const clothes = result[0].clothes;
+    const shirtCount = result[0].shirtCount[0]?.count || 0;
+    const pantCount = result[0].pantCount[0]?.count || 0;
+
+    res.status(200).json({ clothes, shirtCount, pantCount }); // facet trả về mảng -> lấy phần tử đầu
   } catch (error) {
     console.error("Lỗi khi gọi getAllClothes:", error);
     res.status(500).json({ message: "Internal server error" });

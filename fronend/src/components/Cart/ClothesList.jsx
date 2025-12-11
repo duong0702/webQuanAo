@@ -5,11 +5,9 @@ import { ShoppingCart, Trash2 } from "lucide-react";
 
 const ClothesList = ({ filteredClothes }) => {
   const [clothesList, setClothesList] = useState([]);
-
   const [selectedIds, setSelectedIds] = useState([]);
   const filter = "all";
 
-  // mỗi khi props thay đổi → update state
   useEffect(() => {
     setClothesList(filteredClothes);
   }, [filteredClothes]);
@@ -37,31 +35,8 @@ const ClothesList = ({ filteredClothes }) => {
   };
 
   return (
-    <div className="space-y-4 pb-20">
-      <div className="flex justify-end items-center gap-3 pr-4 fixed right-0 top-10 ">
-        <button
-          className="px-4 py-2 bg-gradient-to-r from-green-500 via-green-100 to-white rounded-lg shadow group transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg flex items-center gap-2"
-          onClick={handlePaySelected}
-        >
-          <ShoppingCart size={18} className="text-white" />
-          <span>
-            Thanh toán {selectedIds.length > 0 ? selectedIds.length : ""} sản
-            phẩm
-          </span>
-        </button>
-
-        <button
-          onClick={handleDeleteSelected}
-          className="px-4 py-2 bg-gradient-to-r from-red-500 via-red-100 to-white rounded-lg shadow group transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg flex items-center gap-2"
-        >
-          <Trash2 size={18} className="text-white" />
-          <span>
-            Xóa {selectedIds.length > 0 ? selectedIds.length : ""} sản phẩm
-          </span>
-        </button>
-      </div>
-
-      {/* render danh sách */}
+    <div className="space-y-4 pb-10">
+      {/* Danh sách sản phẩm */}
       {clothesList.map((clothes, i) => (
         <ClothesCard
           key={clothes._id}
@@ -71,6 +46,45 @@ const ClothesList = ({ filteredClothes }) => {
           toggleSelect={() => toggleSelect(clothes._id)}
         />
       ))}
+
+      {/* Thanh công cụ ngay dưới danh sách */}
+      <div className="flex justify-end gap-3 mt-4">
+        <button
+          onClick={handlePaySelected}
+          className={`px-4 py-2 bg-gradient-to-r from-green-500 to-green-300 text-white rounded-xl shadow flex items-center gap-2 transition transform hover:scale-105 ${
+            selectedIds.length === 0
+              ? "opacity-50 cursor-not-allowed"
+              : "opacity-100"
+          }`}
+          disabled={selectedIds.length === 0}
+        >
+          <ShoppingCart size={18} />
+          <span>
+            Thanh toán{" "}
+            {selectedIds.length > 0
+              ? selectedIds.length + " sản phẩm"
+              : "sản phẩm"}
+          </span>
+        </button>
+
+        <button
+          onClick={handleDeleteSelected}
+          className={`px-4 py-2 bg-gradient-to-r from-red-500 to-red-300 text-white rounded-xl shadow flex items-center gap-2 transition transform hover:scale-105 ${
+            selectedIds.length === 0
+              ? "opacity-50 cursor-not-allowed"
+              : "opacity-100"
+          }`}
+          disabled={selectedIds.length === 0}
+        >
+          <Trash2 size={18} />
+          <span>
+            Xóa{" "}
+            {selectedIds.length > 0
+              ? selectedIds.length + " sản phẩm"
+              : "sản phẩm"}
+          </span>
+        </button>
+      </div>
     </div>
   );
 };

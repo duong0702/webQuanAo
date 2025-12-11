@@ -1,5 +1,7 @@
 export const FilterTypes = {
   all: "tất cả",
   shirt: "áo",
-  pants: "quần",
+  pant: "quần",
 };
+
+export const visibleClothesLimit = 5;
