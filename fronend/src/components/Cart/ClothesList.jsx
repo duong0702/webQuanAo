@@ -1,29 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import EmptyState from "../EmptyState";
 import ClothesCard from "../ClothesCard";
+import { ShoppingCart, Trash2 } from "lucide-react";
 
-const ClothesList = () => {
-  const [clothesList, setClothesList] = useState([
-    {
-      _id: "1",
-      name: "T-Shirt",
-      color: "red",
-      size: "M",
-      price: 20,
-      addedAt: Date.now(),
-    },
-    {
-      _id: "2",
-      name: "Hoodie",
-      color: "blue",
-      size: "L",
-      price: 35,
-      addedAt: Date.now(),
-    },
-  ]);
+const ClothesList = ({ filteredClothes }) => {
+  const [clothesList, setClothesList] = useState([]);
 
   const [selectedIds, setSelectedIds] = useState([]);
   const filter = "all";
+
+  // mỗi khi props thay đổi → update state
+  useEffect(() => {
+    setClothesList(filteredClothes);
+  }, [filteredClothes]);
 
   if (!clothesList || clothesList.length === 0) {
     return <EmptyState filter={filter} />;
@@ -49,28 +38,30 @@ const ClothesList = () => {
 
   return (
     <div className="space-y-4 pb-20">
-      {/* Thanh công cụ nằm hẳn bên phải */}
-      {selectedIds.length > 0 && (
-        <div className="sticky top-0 bg-white z-10 border-b py-3">
-          <div className="flex justify-end items-center gap-3 pr-4">
-            <button
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
-              onClick={handlePaySelected}
-            >
-              Thanh toán tất cả ({selectedIds.length})
-            </button>
+      <div className="flex justify-end items-center gap-3 pr-4 fixed right-0 top-10 ">
+        <button
+          className="px-4 py-2 bg-gradient-to-r from-green-500 via-green-100 to-white rounded-lg shadow group transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg flex items-center gap-2"
+          onClick={handlePaySelected}
+        >
+          <ShoppingCart size={18} className="text-white" />
+          <span>
+            Thanh toán {selectedIds.length > 0 ? selectedIds.length : ""} sản
+            phẩm
+          </span>
+        </button>
 
-            <button
-              className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700"
-              onClick={handleDeleteSelected}
-            >
-              Xóa tất cả
-            </button>
-          </div>
-        </div>
-      )}
+        <button
+          onClick={handleDeleteSelected}
+          className="px-4 py-2 bg-gradient-to-r from-red-500 via-red-100 to-white rounded-lg shadow group transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg flex items-center gap-2"
+        >
+          <Trash2 size={18} className="text-white" />
+          <span>
+            Xóa {selectedIds.length > 0 ? selectedIds.length : ""} sản phẩm
+          </span>
+        </button>
+      </div>
 
-      {/* Danh sách card */}
+      {/* render danh sách */}
       {clothesList.map((clothes, i) => (
         <ClothesCard
           key={clothes._id}

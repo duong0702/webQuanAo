@@ -1,7 +1,5 @@
 import { registerService, loginService } from "../services/authServices.js";
 
-import { generateToken } from "../utils/generateToken.js";
-
 export const register = async (req, res) => {
   try {
     const user = await registerService(req.body);

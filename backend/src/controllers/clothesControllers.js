@@ -4,11 +4,21 @@ import {
   updateClothesService,
   deleteClothesService,
 } from "../services/CRUDservices.js";
+import Clothes from "../models/clothes.js";
 
 const getAllClothes = async (req, res) => {
   try {
-    const clothess = await getAllClothesService();
-    res.status(200).json(clothess);
+    const result = await Clothes.aggregate([
+      {
+        $facet: {
+          clothes: [{ $sort: { createdAt: -1 } }],
+          shirtCount: [{ $match: { type: "shirt" } }, { $count: "count" }],
+          pantCount: [{ $match: { type: "pant" } }, { $count: "count" }],
+        },
+      },
+    ]);
+
+    res.status(200).json(result[0]); // facet trả về mảng -> lấy phần tử đầu
   } catch (error) {
     console.error("Lỗi khi gọi getAllClothes:", error);
     res.status(500).json({ message: "Internal server error" });

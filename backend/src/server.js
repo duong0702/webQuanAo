@@ -4,18 +4,19 @@ import { connectDB } from "./config/db.js";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRouters.js";
 import orderRoutes from "./routes/orderRouters.js";
+import cors from "cors";
 
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 const app = express();
-
+// middlewares
 app.use(express.json());
+app.use(cors());
 
 app.use("/api/clothes", clothesRouter);
 app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
-app.use("/api/auth", authRoutes);
 
 connectDB().then(() => {
   app.listen(PORT, () => {

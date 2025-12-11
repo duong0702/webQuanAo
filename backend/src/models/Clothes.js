@@ -2,20 +2,31 @@ import mongoose from "mongoose";
 
 const clothesSchema = new mongoose.Schema(
   {
-    title: {
+    color: {
       type: String,
       required: true,
       trim: true,
     },
-    status: {
-      type: String,
-      enum: ["available", "completed", "active"],
-      default: "active",
+    price: {
+      type: Number,
+      required: true,
+      min: 0,
     },
-
-    completedAt: {
-      type: Date,
-      default: null,
+    brand: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    type: {
+      type: String,
+      required: true,
+      trim: true,
+      enum: ["shirt", "pant"],
+    },
+    size: {
+      type: String,
+      required: true,
+      trim: true,
     },
   },
   {
