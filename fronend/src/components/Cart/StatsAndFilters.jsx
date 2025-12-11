@@ -1,11 +1,12 @@
-import { FilterTypes } from "@/lib/data";
-import { type } from "os";
 import React from "react";
-import { Button } from "../button";
+import { FilterTypes } from "@/lib/data";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { Filter } from "lucide-react";
 
 const StatsAndFilters = ({
-  completedClothesCount = 0,
-  typeClothesCount = 0,
+  shirtClothesCount = 0,
+  pantsClothesCount = 0,
   filter = "all",
 }) => {
   return (
@@ -15,16 +16,17 @@ const StatsAndFilters = ({
           variant="secondary"
           className="bg-white/50 text-accent-foreground border-info/20"
         >
-          {typeClothesCount} {FilterTypes.type}
+          {shirtClothesCount} {FilterTypes.shirt}{" "}
         </Badge>
 
         <Badge
           variant="secondary"
           className="bg-white/50 text-success border-success/20"
         >
-          {completedClothesCount} {FilterTypes.completed}{" "}
+          {pantsClothesCount} {FilterTypes.pants}{" "}
         </Badge>
       </div>
+
       <div className="flex flex-col gap-2 sm:flex-row">
         {Object.keys(FilterTypes).map((type) => (
           <Button

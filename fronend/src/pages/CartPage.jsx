@@ -1,10 +1,9 @@
-import AddClothes from "@/components/ui/Cart/AddClothes";
-import ClothesList from "@/components/ui/Cart/ClothesList";
-import Footer from "@/components/ui/Cart/Footer";
-import DateTimerFilter from "@/components/ui/Cart/DateTimerFilter";
-import Herder from "@/components/ui/Cart/Header";
-import StatsAndFilters from "@/components/ui/Cart/StatsAndFilters";
-import ClothesListPagination from "@/components/ui/Cart/ClothesListPagination";
+import ClothesList from "@/components/Cart/ClothesList";
+import Footer from "@/components/Cart/Footer";
+import DateTimerFilter from "@/components/Cart/DateTimerFilter";
+import Herder from "@/components/Cart/Header";
+import StatsAndFilters from "@/components/Cart/StatsAndFilters";
+import ClothesListPagination from "@/components/Cart/ClothesListPagination";
 import React from "react";
 
 const CartPage = () => {
@@ -26,8 +25,6 @@ const CartPage = () => {
       <div className="container pt-8 mx-auto relative z-10">
         <div className="w-full max-w-2xl p-6 mx-auto space-y-6"></div>
         <Herder />
-
-        <AddClothes />
 
         <StatsAndFilters />
 
