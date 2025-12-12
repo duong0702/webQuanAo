@@ -7,6 +7,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import axios from "axios";
 import { visibleClothesLimit } from "@/lib/data";
+import HomeHeader from "@/components/Home/HomeHeader";
 
 const CartPage = () => {
   const [clothesBuffer, setClothesBuffer] = useState([]);
@@ -87,6 +88,8 @@ const CartPage = () => {
       />
 
       <div className="container pt-8 mx-auto relative z-10">
+        <HomeHeader />
+
         <Herder />
 
         <StatsAndFilters

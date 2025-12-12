@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import HomePage from "./pages/HomePage.jsx";
 import CartPage from "./pages/CartPage.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import ProductDetail from "./pages/ProductDetail.jsx";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/homepage" element={<ProductDetail />} />
         </Routes>
       </BrowserRouter>
     </>
