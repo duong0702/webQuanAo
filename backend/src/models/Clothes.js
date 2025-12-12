@@ -28,6 +28,10 @@ const clothesSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    image: {
+      type: String, // lưu URL Cloudinary
+      required: true,
+    },
   },
   {
     timestamps: true,
