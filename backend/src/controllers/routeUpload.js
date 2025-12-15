@@ -1,6 +1,6 @@
 // src/controller/routeUpload.js
 import express from "express";
-import cloudinary from "../../utils/cloudinary.js";
+import cloudinary from "../config/cloudinary.js";
 import multer from "multer";
 import fs from "fs";
 import path from "path";

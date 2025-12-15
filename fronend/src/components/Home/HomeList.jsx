@@ -1,136 +1,229 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-// Mock 50 products
-const generateMockProducts = () =>
-  Array.from({ length: 50 }).map((_, i) => ({
-    _id: `prod_${i + 1}`,
-    id: i + 1,
-    title: `Product ${i + 1}`,
-    brand: `Brand ${(i % 8) + 1}`,
-    price: Math.round(20 + Math.random() * 150),
-    type: ["hoodie", "polo", "shorts", "pants", "dress"][i % 5],
-    size: ["XS", "S", "M", "L", "XL"][i % 5],
-    color: ["red", "blue", "green", "black", "white"][i % 5],
-    image: `https://picsum.photos/seed/product${i + 1}/400/400`,
-  }));
+/* =======================
+   1. CẤU HÌNH CƠ BẢN
+======================= */
 
-const mockProducts = generateMockProducts();
+// Thứ tự category hiển thị ở trang Home
+const defaultCategoryOrder = ["hoodie", "polo", "shirt", "pant", "short"];
+
+// Hàm chia mảng thành nhiều trang (phục vụ nút ◀ ▶)
+const chunk = (arr, size) => {
+  const res = [];
+  for (let i = 0; i < arr.length; i += size) {
+    res.push(arr.slice(i, i + size));
+  }
+  return res;
+};
+
+/* =======================
+   2. COMPONENT CHÍNH
+======================= */
 
 const HomeList = ({ filters }) => {
-  const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
-  const perPage = 12;
+  /* ---------- STATE ---------- */
+  const [products, setProducts] = useState([]); // toàn bộ sản phẩm
+  const [query, setQuery] = useState(""); // search text
+  const [pageByCat, setPageByCat] = useState({}); // trang hiện tại của từng category
+  const [visiblePerPage, setVisiblePerPage] = useState(4); // số card hiển thị / hàng
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
 
-  // Filter products by search query and filter options
-  const filtered = useMemo(() => {
-    let list = mockProducts;
+  /* =======================
+     3. FETCH DATA TỪ BACKEND
+  ======================= */
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get("http://localhost:3000/api/clothes/all");
 
-    // Search filter
+        // backend có dạng { clothes: [...] }
+        const raw = res.data?.clothes || [];
+
+        // 🔥 CHUẨN HÓA DATA (FIX LỖI ẢNH + FIELD)
+        const normalized = raw.map((r) => {
+          let image = "";
+
+          // fix trường hợp images là array / string
+          if (Array.isArray(r.images) && r.images.length > 0) {
+            image = r.images[0];
+          } else if (typeof r.images === "string") {
+            image = r.images.split(",")[0];
+          } else if (typeof r.image === "string") {
+            image = r.image.split(",")[0];
+          }
+
+          return {
+            ...r,
+            image,
+            brand: r.brand || r.name || "",
+            title: r.title || r.name || "",
+            size: Array.isArray(r.size) ? r.size[0] : r.size,
+            type: (r.type || "other").toLowerCase(), // ⭐ QUAN TRỌNG
+          };
+        });
+
+        console.log("HOME FETCH DATA:", normalized);
+        setProducts(normalized);
+      } catch (err) {
+        setError("Không tải được sản phẩm");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  /* =======================
+     4. RESPONSIVE (SỐ CARD / HÀNG)
+  ======================= */
+  useEffect(() => {
+    const calc = () => {
+      const w = window.innerWidth;
+      if (w >= 1280) setVisiblePerPage(4);
+      else if (w >= 768) setVisiblePerPage(3);
+      else setVisiblePerPage(2);
+    };
+    calc();
+    window.addEventListener("resize", calc);
+    return () => window.removeEventListener("resize", calc);
+  }, []);
+
+  /* =======================
+     5. FILTER + GROUP THEO CATEGORY
+  ======================= */
+  const grouped = useMemo(() => {
+    let list = [...products];
+
+    // search
     if (query) {
+      const q = query.toLowerCase();
       list = list.filter(
         (p) =>
-          p.brand.toLowerCase().includes(query.toLowerCase()) ||
-          p.title.toLowerCase().includes(query.toLowerCase())
+          p.brand.toLowerCase().includes(q) || p.title.toLowerCase().includes(q)
       );
     }
 
-    // Category filter (from HomeFilter)
-    if (filters && filters.categories && filters.categories.length > 0) {
-      list = list.filter((p) => filters.categories.includes(p.type));
-    }
-
-    // Size filter
-    if (filters && filters.sizes && filters.sizes.length > 0) {
+    // filter size
+    if (filters?.sizes?.length) {
       list = list.filter((p) => filters.sizes.includes(p.size));
     }
 
-    // Price filter
-    if (filters && filters.price && filters.price !== "all") {
-      const parts = filters.price.split("-");
-      const min = Number(parts[0]);
-      const max = parts[1] ? Number(parts[1]) : Infinity;
-      list = list.filter((p) => p.price >= min && p.price <= max);
+    // filter price
+    if (filters?.price && filters.price !== "all") {
+      const [min, max] = filters.price.split("-").map(Number);
+      list = list.filter((p) => p.price >= min && p.price <= (max || Infinity));
     }
 
-    return list;
-  }, [query, filters]);
+    // group theo category
+    const map = {};
+    defaultCategoryOrder.forEach((c) => (map[c] = []));
 
-  const pageCount = Math.ceil(filtered.length / perPage) || 1;
-  const visible = filtered.slice((page - 1) * perPage, page * perPage);
+    list.forEach((p) => {
+      if (!map[p.type]) map[p.type] = [];
+      map[p.type].push(p);
+    });
 
-  // Reset to page 1 when filters change
-  useEffect(() => {
-    setPage(1);
-  }, [filters]);
+    return map;
+  }, [products, query, filters]);
 
+  /* =======================
+     6. PAGINATION THEO CATEGORY
+  ======================= */
+  const nextPage = (cat, total) => {
+    setPageByCat((prev) => ({
+      ...prev,
+      [cat]: Math.min((prev[cat] || 0) + 1, total - 1),
+    }));
+  };
+
+  const prevPage = (cat) => {
+    setPageByCat((prev) => ({
+      ...prev,
+      [cat]: Math.max((prev[cat] || 0) - 1, 0),
+    }));
+  };
+
+  console.log("HOME PRODUCTS STATE:", products);
+
+  /* =======================
+     7. RENDER UI
+  ======================= */
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      {/* SEARCH BAR */}
+      <div className="flex justify-between mb-4">
         <input
-          placeholder="Tìm kiếm sản phẩm"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="border rounded p-2 w-1/2"
+          placeholder="Tìm kiếm sản phẩm"
+          className="border p-2 rounded w-1/2"
         />
-        <div className="text-sm text-gray-500">
-          Tổng {filtered.length} sản phẩm
-        </div>
+        <span className="text-gray-500">Tổng {products.length} sản phẩm</span>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {visible.length > 0 ? (
-          visible.map((p) => (
-            <div
-              key={p._id}
-              className="bg-white rounded shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition"
-              onClick={() => navigate(`/product/${p._id}`)}
-            >
-              <div className="h-48 bg-gray-100">
-                <img
-                  src={p.image}
-                  alt={p.brand}
-                  className="w-full h-full object-cover hover:scale-105 transition"
-                />
-              </div>
-              <div className="p-3">
-                <div className="text-sm text-gray-600">
-                  {p.type} · {p.size}
-                </div>
-                <h4 className="font-semibold mt-1">{p.brand}</h4>
-                <div className="mt-2 font-bold text-indigo-600">${p.price}</div>
+      {loading && <div className="text-center">Đang tải...</div>}
+      {error && <div className="text-red-500">{error}</div>}
+
+      {/* DANH SÁCH CATEGORY */}
+      {defaultCategoryOrder.map((cat) => {
+        const items = grouped[cat];
+        if (!items || items.length === 0) return null;
+
+        const pages = chunk(items, visiblePerPage);
+        const cur = pageByCat[cat] || 0;
+
+        return (
+          <section key={cat} className="mb-10">
+            <div className="flex justify-between mb-3">
+              <h2 className="font-bold text-lg capitalize">{cat}</h2>
+              <div>
+                <button onClick={() => prevPage(cat)} disabled={cur === 0}>
+                  ◀
+                </button>
+                <span className="mx-2">
+                  {cur + 1}/{pages.length}
+                </span>
+                <button
+                  onClick={() => nextPage(cat, pages.length)}
+                  disabled={cur === pages.length - 1}
+                >
+                  ▶
+                </button>
               </div>
             </div>
-          ))
-        ) : (
-          <div className="col-span-full text-center py-8 text-gray-500">
-            Không tìm thấy sản phẩm phù hợp
-          </div>
-        )}
-      </div>
 
-      <div className="mt-6 flex items-center justify-between">
-        <div className="flex gap-2">
-          <button
-            disabled={page === 1}
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            Prev
-          </button>
-          <button
-            disabled={page === pageCount}
-            onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
-        <div className="text-sm text-gray-500">
-          Trang {page} / {pageCount}
-        </div>
-      </div>
+            <div className="flex gap-4 overflow-hidden">
+              {pages[cur].map((p) => (
+                <div
+                  key={p._id}
+                  onClick={() => navigate(`/product/${p._id}`)}
+                  className="w-72 cursor-pointer bg-gray-50 rounded shadow"
+                >
+                  <img
+                    src={p.image}
+                    alt={p.brand}
+                    className="h-48 w-full object-cover"
+                  />
+                  <div className="p-3">
+                    <div className="text-sm text-gray-500">
+                      {p.type} · {p.size}
+                    </div>
+                    <div className="font-semibold">{p.brand}</div>
+                    <div className="text-indigo-600 font-bold">${p.price}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 };

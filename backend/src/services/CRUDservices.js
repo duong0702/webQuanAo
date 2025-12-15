@@ -1,13 +1,8 @@
-import Clothes from "../models/clothes.js";
+import Clothes from "../models/Clothes.js";
 
 // Lấy tất cả
 export const getAllClothesService = async () => {
   return await Clothes.find().sort({ createdAt: -1 });
-};
-
-// Tạo mới
-export const createClothesService = async (data) => {
-  return await Clothes.create(data);
 };
 
 // Cập nhật

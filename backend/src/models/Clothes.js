@@ -2,41 +2,31 @@ import mongoose from "mongoose";
 
 const clothesSchema = new mongoose.Schema(
   {
-    color: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    price: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    brand: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+    name: { type: String, required: true },
+    price: { type: Number, required: true },
+    color: { type: [String], required: true },
+
     type: {
       type: String,
+      enum: ["hoodie", "polo", "shirt", "pant", "short"],
       required: true,
-      trim: true,
-      enum: ["shirt", "pant"],
     },
+
     size: {
-      type: String,
+      type: [String],
+      enum: ["s", "m", "l", "xl"],
       required: true,
-      trim: true,
     },
-    image: {
-      type: String, // lưu URL Cloudinary
+
+    images: {
+      type: [String],
       required: true,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-export default mongoose.model("Clothes", clothesSchema);
+const ClothesModel =
+  mongoose.models.Clothes || mongoose.model("Clothes", clothesSchema);
+export default ClothesModel;
 export { clothesSchema };

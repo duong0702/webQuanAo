@@ -24,7 +24,7 @@ const CartPage = () => {
   // Fetch API
   const fetchClothes = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/clothes");
+      const res = await axios.get("http://localhost:3000/api/clothes/all");
       console.log("API DATA:", res.data);
 
       setClothesBuffer(res.data.clothes || []);
