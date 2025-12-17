@@ -2,6 +2,7 @@ import React from "react";
 import { Card } from "./ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { addToCart } from "@/lib/cart";
 import { Calendar, CheckCircle2, Circle } from "lucide-react";
 
 const ClothesCard = ({ clothes, index, isSelected, toggleSelect }) => {
@@ -20,16 +21,16 @@ const ClothesCard = ({ clothes, index, isSelected, toggleSelect }) => {
           variant="ghost"
           size="icon"
           className={cn(
-            "shrink-0 size-8 rounded-full transition-all duration-200",
+            "shrink-0 h-8 w-8 rounded-full transition-all duration-200",
             isSelected
               ? "text-success hover:text-success/80"
               : "text-muted-foreground hover:text-primary"
           )}
         >
           {isSelected ? (
-            <CheckCircle2 className="size-5" />
+            <CheckCircle2 className="h-5 w-5" />
           ) : (
-            <Circle className="size-5" />
+            <Circle className="h-5 w-5" />
           )}
         </Button>
 
@@ -46,12 +47,31 @@ const ClothesCard = ({ clothes, index, isSelected, toggleSelect }) => {
 
         {/* ngày tạo */}
         <div className="flex items-center gap-2 mt-1">
-          <Calendar className="size-3 text-muted-foreground" />
+          <Calendar className="h-3 w-3 text-muted-foreground" />
           <span className="text-xs text-muted-foreground">
             {clothes.createdAt
               ? new Date(clothes.createdAt).toLocaleDateString()
               : "N/A"}
           </span>
+        </div>
+
+        {/* add to cart button */}
+        <div className="ml-3">
+          <Button
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              addToCart({
+                product: clothes._id,
+                name: clothes.brand || clothes.title || "",
+                image: clothes.image || "",
+                price: clothes.price || 0,
+              });
+              alert("Đã thêm vào giỏ hàng");
+            }}
+          >
+            Thêm
+          </Button>
         </div>
       </div>
     </Card>

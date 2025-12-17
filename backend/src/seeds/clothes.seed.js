@@ -95,23 +95,24 @@ const seedClothes = async () => {
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783771/tr3_wsdodv.jpg",
         ],
       },
-     {
-  name: "Áo hoodie mickey",
-  price: 45,
-  color: "black",
-  type: "hoodie",
-  size: "xl",
+      {
+        name: "Áo hoodie mickey",
+        price: 45,
+        color: "black",
+        type: "hoodie",
+        size: "xl",
 
-  image: "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783772/mk1_vrtzky.jpg", // ảnh đại diện
+        image:
+          "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783772/mk1_vrtzky.jpg", // ảnh đại diện
 
-  images: [
-    "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783772/mk1_vrtzky.jpg",
-    "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783773/mk2_koij0d.jpg",
-    "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783775/mk3_hpgzf2.jpg",
-    "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783775/mk5_banbjq.jpg",
-    "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783775/mk4_vop59c.jpg",
-  ],
-}
+        images: [
+          "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783772/mk1_vrtzky.jpg",
+          "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783773/mk2_koij0d.jpg",
+          "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783775/mk3_hpgzf2.jpg",
+          "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783775/mk5_banbjq.jpg",
+          "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783775/mk4_vop59c.jpg",
+        ],
+      },
 
       {
         name: " Áo thêu tay 2025 ",

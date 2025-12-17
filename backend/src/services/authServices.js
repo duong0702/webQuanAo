@@ -1,35 +1,49 @@
+// src/services/authServices.js
+import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-import bcrypt from "bcrypt";
 
-export const registerService = async (data) => {
-  const { name, email, password } = data;
-
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    throw new Error("Email already exists");
-  }
-
-  const hash = await bcrypt.hash(password, 10);
-
-  return User.create({
-    name,
-    email,
-    password: hash,
+const generateToken = (user) => {
+  return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
   });
 };
 
-export const loginService = async (data) => {
-  const { email, password } = data;
+export const registerService = async ({ name, email, password }) => {
+  const existed = await User.findOne({ email });
+  if (existed) {
+    throw new Error("Email already exists");
+  }
 
+  const user = await User.create({ name, email, password });
+  const token = generateToken(user);
+
+  return {
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+    token,
+  };
+};
+
+export const loginService = async ({ email, password }) => {
   const user = await User.findOne({ email });
-  if (!user) {
-    throw new Error("User not found");
-  }
+  if (!user) throw new Error("Invalid email or password");
 
-  const match = await bcrypt.compare(password, user.password);
-  if (!match) {
-    throw new Error("Wrong password");
-  }
+  const isMatch = await user.comparePassword(password);
+  if (!isMatch) throw new Error("Invalid email or password");
 
-  return user;
+  const token = generateToken(user);
+
+  return {
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+    token,
+  };
 };

@@ -7,14 +7,23 @@ import {
   getClothesById,
   updateClothes,
 } from "../controllers/clothesControllers.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { isAdmin } from "../middlewares/adminMiddleware.js";
 
 const router = express.Router();
 
 router.get("/", getAllClothes);
 router.get("/all", getAllClothes);
 router.get("/:id", getClothesById);
-router.post("/create", upload.array("images", 6), createClothes);
-router.put("/:id", updateClothes);
-router.delete("/:id", deleteClothes);
+// create/update/delete are admin-only
+router.post(
+  "/create",
+  authMiddleware,
+  isAdmin,
+  upload.array("images", 6),
+  createClothes
+);
+router.put("/:id", authMiddleware, isAdmin, updateClothes);
+router.delete("/:id", authMiddleware, isAdmin, deleteClothes);
 
 export default router;

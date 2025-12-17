@@ -85,10 +85,10 @@ function PaginationEllipsis({ className, ...props }) {
     <span
       aria-hidden
       data-slot="pagination-ellipsis"
-      className={cn("flex size-9 items-center justify-center", className)}
+      className={cn("flex h-9 w-9 items-center justify-center", className)}
       {...props}
     >
-      <MoreHorizontalIcon className="size-4" />
+      <MoreHorizontalIcon className="h-4 w-4" />
       <span className="sr-only">More pages</span>
     </span>
   );

@@ -13,38 +13,46 @@ const HomePage = () => {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const handleFilterApply = (f) => {
+    setFilters(f);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
-      {/* Diagonal Grid with Electric Orange */}
-      <div
-        className="absolute inset-0 z-0 pointer-events-none"
-        style={{
-          backgroundImage: `
-          repeating-linear-gradient(45deg, rgba(255, 0, 100, 0.1) 0, rgba(255, 0, 100, 0.1) 1px, transparent 1px, transparent 20px),
-        repeating-linear-gradient(-45deg, rgba(255, 0, 100, 0.1) 0, rgba(255, 0, 100, 0.1) 1px, transparent 1px, transparent 20px)
-        `,
-          backgroundSize: "40px 40px",
-        }}
-      />
+    <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900">
       <HomeHeader />
 
-      <div className="max-w-7xl mx-auto px-4 lg:px-8">
-        {/* Banner */}
-        <div className="pt-6">
-          <Banner />
-        </div>
+      {/* Main content area with background extending */}
+      <div className="flex-1 bg-gray-50">
+        {/* Diagonal Grid with Electric Orange */}
+        <div
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{
+            backgroundImage: `
+            repeating-linear-gradient(45deg, rgba(255, 0, 100, 0.1) 0, rgba(255, 0, 100, 0.1) 1px, transparent 1px, transparent 20px),
+          repeating-linear-gradient(-45deg, rgba(255, 0, 100, 0.1) 0, rgba(255, 0, 100, 0.1) 1px, transparent 1px, transparent 20px)
+          `,
+            backgroundSize: "40px 40px",
+          }}
+        />
 
-        {/* Horizontal filter under banner */}
-        <div className="mt-6">
-          <HomeFilter
-            onChange={(f) => setFilters(f)}
-            onJump={(cat) => handleJump(cat)}
-          />
-        </div>
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
+          {/* Banner */}
+          <div className="pt-6">
+            <Banner />
+          </div>
 
-        {/* Product rows (each category is a horizontal row) */}
-        <div className="mt-6 mb-12">
-          <HomeList filters={filters} />
+          {/* Horizontal filter under banner */}
+          <div className="mt-6">
+            <HomeFilter
+              onApplyFilter={handleFilterApply}
+              onJump={(cat) => handleJump(cat)}
+            />
+          </div>
+
+          {/* Product rows (each category is a horizontal row) */}
+          <div className="mt-6 pb-12">
+            <HomeList filters={filters} />
+          </div>
         </div>
       </div>
 

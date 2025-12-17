@@ -141,6 +141,19 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  html,
+  body,
+  #app,
+  #root-wrapper {
+    height: 100%;
+    width: 100%;
+  }
+
+  #root-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 @layer components {
