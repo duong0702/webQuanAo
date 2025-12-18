@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -19,15 +19,13 @@ const HomeList = ({ filters }) => {
   /* ---------- STATE ---------- */
   const [products, setProducts] = useState([]); // toàn bộ sản phẩm
   const [query, setQuery] = useState(""); // search text
-  const [pageByCat, setPageByCat] = useState({}); // trang hiện tại của từng category
   const [visiblePerPage, setVisiblePerPage] = useState(4); // số card hiển thị / hàng
-  const [animByCat, setAnimByCat] = useState({}); // animation state per category
+  const [filteredProducts, setFilteredProducts] = useState([]); // single source of truth after filters
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [scrollInView, setScrollInView] = useState(new Set()); // categories in view
 
   const navigate = useNavigate();
-  const sectionRefs = useRef({});
+  // sectionRefs and complex observers/carousel removed in this refactor
 
   /* =======================
      3. FETCH DATA TỪ BACKEND
@@ -111,81 +109,9 @@ const HomeList = ({ filters }) => {
     return () => window.removeEventListener("resize", calc);
   }, []);
 
-  /* =======================
-     4B. SCROLL ANIMATION - INTERSECTION OBSERVER
-  ======================= */
+  /* Compute filteredProducts from `products`, `query`, and `filters` so UI has one source of truth */
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const cat = entry.target.id.replace("cat-", "");
-          setScrollInView((prev) => {
-            const updated = new Set(prev);
-            if (entry.isIntersecting) {
-              updated.add(cat);
-            } else {
-              updated.delete(cat);
-            }
-            return updated;
-          });
-        });
-      },
-      { threshold: 0.2 }
-    );
-
-    // Delay để đảm bảo refs đã được gán
-    const timer = setTimeout(() => {
-      Object.values(sectionRefs.current).forEach((ref) => {
-        if (ref) observer.observe(ref);
-      });
-    }, 100);
-
-    return () => {
-      clearTimeout(timer);
-      observer.disconnect();
-    };
-  }, []);
-
-  // Re-observe when products change
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const cat = entry.target.id.replace("cat-", "");
-          console.log(
-            `Scroll animation: ${cat} isIntersecting=${entry.isIntersecting}`
-          );
-          setScrollInView((prev) => {
-            const updated = new Set(prev);
-            if (entry.isIntersecting) {
-              updated.add(cat);
-            } else {
-              updated.delete(cat);
-            }
-            return updated;
-          });
-        });
-      },
-      { threshold: 0.2 }
-    );
-
-    Object.values(sectionRefs.current).forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [products]);
-
-  // 🔥 RESET pagination khi filter thay đổi
-  useEffect(() => {
-    setPageByCat({});
-  }, [filters]);
-  const grouped = useMemo(() => {
     let list = [...products];
-
-    console.log("🔍 DEBUG - Input filters:", filters);
 
     // search
     if (query) {
@@ -197,90 +123,42 @@ const HomeList = ({ filters }) => {
     }
 
     // filter category
-    // 🔥 Nếu user chọn categories, chỉ lọc theo những cái chọn
-    // Nếu không chọn gì (rỗng), hiển thị tất cả
     if (
       filters?.categories &&
       Array.isArray(filters.categories) &&
       filters.categories.length > 0
     ) {
-      console.log("📌 Lọc categories:", filters.categories);
       list = list.filter((p) => filters.categories.includes(p.type));
     }
 
     // filter size
-    // 🔥 Nếu user chọn sizes, chỉ lọc theo những cái chọn
-    // Nếu không chọn gì (rỗng), hiển thị tất cả
     if (
       filters?.sizes &&
       Array.isArray(filters.sizes) &&
       filters.sizes.length > 0
     ) {
-      console.log("📌 Lọc sizes:", filters.sizes);
       list = list.filter((p) => p.size.some((s) => filters.sizes.includes(s)));
     }
 
     // filter price
     if (filters?.price && filters.price !== "all") {
-      console.log("📌 Lọc price:", filters.price);
       const [min, max] = filters.price.split("-").map(Number);
       list = list.filter((p) => p.price >= min && p.price <= (max || Infinity));
     }
 
-    console.log("✅ Kết quả filter - items:", list.length);
-
-    // group theo category
+    setFilteredProducts(list);
+  }, [products, query, filters]);
+  const groupedByCategory = useMemo(() => {
     const map = {};
     defaultCategoryOrder.forEach((c) => (map[c] = []));
-
-    list.forEach((p) => {
+    filteredProducts.forEach((p) => {
       if (!map[p.type]) map[p.type] = [];
       map[p.type].push(p);
     });
-
-    console.log("📊 Grouped result:", map);
     return map;
-  }, [products, query, filters]);
+  }, [filteredProducts]);
 
-  /* =======================
-     6. CIRCULAR CAROUSEL THEO CATEGORY
-     - `pageByCat[cat]` sẽ lưu startIndex hiện tại (có thể > length -> modulo)
-     - next/prev sẽ tăng/giảm theo 1 và wrap bằng modulo để không có điểm dừng
-  ======================= */
-  const nextPage = (cat, length) => {
-    if (!length) return;
-    setPageByCat((prev) => ({
-      ...prev,
-      [cat]: ((prev[cat] || 0) + 1) % length,
-    }));
-  };
-
-  const prevPage = (cat, length) => {
-    if (!length) return;
-    setPageByCat((prev) => ({
-      ...prev,
-      [cat]: ((prev[cat] || 0) - 1 + length) % length,
-    }));
-  };
-
-  // Handlers that trigger a small lift animation before switching items
-  const handleNext = (cat, length) => {
-    if (!length) return;
-    setAnimByCat((s) => ({ ...s, [cat]: true }));
-    setTimeout(() => {
-      nextPage(cat, length);
-      setTimeout(() => setAnimByCat((s) => ({ ...s, [cat]: false })), 220);
-    }, 180);
-  };
-
-  const handlePrev = (cat, length) => {
-    if (!length) return;
-    setAnimByCat((s) => ({ ...s, [cat]: true }));
-    setTimeout(() => {
-      prevPage(cat, length);
-      setTimeout(() => setAnimByCat((s) => ({ ...s, [cat]: false })), 220);
-    }, 180);
-  };
+  // Carousel/animation logic removed — rendering uses groupedByCategory directly
 
   console.log("HOME PRODUCTS STATE:", products);
 
@@ -297,99 +175,54 @@ const HomeList = ({ filters }) => {
           placeholder="Tìm kiếm sản phẩm"
           className="border p-2 rounded w-1/2"
         />
-        <span className="text-gray-500">Tổng {products.length} sản phẩm</span>
+        <span className="text-gray-500">
+          Tổng {filteredProducts.length} sản phẩm
+        </span>
       </div>
 
       {loading && <div className="text-center">Đang tải...</div>}
       {error && <div className="text-red-500">{error}</div>}
 
-      {/* DANH SÁCH CATEGORY */}
-      {defaultCategoryOrder.map((cat) => {
-        const items = grouped[cat];
-        if (!items || items.length === 0) return null;
-
-        const length = items.length;
-        const start = pageByCat[cat] || 0;
-        const visibleCount = Math.min(visiblePerPage, length);
-        const visible = [];
-        for (let i = 0; i < visibleCount; i++) {
-          visible.push(items[(start + i) % length]);
-        }
-
-        return (
-          <section
-            id={`cat-${cat}`}
-            key={cat}
-            className="mb-10"
-            ref={(el) => {
-              sectionRefs.current[cat] = el;
-            }}
-          >
+      {/* DANH SÁCH CATEGORY - render only non-empty groups from filteredProducts */}
+      {(() => {
+        const groups = groupedByCategory;
+        const catsToRender = defaultCategoryOrder.filter(
+          (c) => groups[c] && groups[c].length > 0
+        );
+        return catsToRender.map((cat) => (
+          <section key={cat} className="mb-10">
             <div className="flex justify-between mb-3 items-center">
               <h2 className="font-bold text-lg capitalize">{cat}</h2>
               <div className="text-sm text-gray-500">
-                {start + 1}/{length}
+                {groups[cat].length} items
               </div>
             </div>
 
-            <div className="relative">
-              <button
-                onClick={() => handlePrev(cat, length)}
-                className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white px-3 py-2 rounded-full shadow z-10"
-              >
-                ◀
-              </button>
-
-              <div
-                className={`flex gap-4 overflow-hidden px-8 ${
-                  cat === "pant" && length === 3 ? "justify-center" : ""
-                }`}
-              >
-                {visible.map((p, idx) => (
-                  <div
-                    key={p._id}
-                    onClick={() => navigate(`/product/${p._id}`)}
-                    className={`w-64 sm:w-72 shrink-0 cursor-pointer bg-gray-50 rounded shadow transform transition-all duration-1000 ${
-                      scrollInView.has(cat) && !animByCat[cat]
-                        ? "translate-y-0 opacity-100"
-                        : animByCat[cat]
-                        ? "-translate-y-3 opacity-80"
-                        : "translate-y-12 opacity-0"
-                    }`}
-                    style={{
-                      transitionDelay: scrollInView.has(cat)
-                        ? `${idx * 150}ms`
-                        : "0ms",
-                    }}
-                  >
-                    <img
-                      src={p.image}
-                      alt={p.brand}
-                      className="h-48 w-full object-cover"
-                    />
-                    <div className="p-3">
-                      <div className="text-sm text-gray-500">
-                        {p.type} · {p.size}
-                      </div>
-                      <div className="font-semibold">{p.brand}</div>
-                      <div className="text-indigo-600 font-bold">
-                        ${p.price}
-                      </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {groups[cat].map((p) => (
+                <div
+                  key={p._id}
+                  onClick={() => navigate(`/product/${p._id}`)}
+                  className="cursor-pointer bg-gray-50 rounded shadow overflow-hidden"
+                >
+                  <img
+                    src={p.image}
+                    alt={p.brand}
+                    className="h-48 w-full object-cover"
+                  />
+                  <div className="p-3">
+                    <div className="text-sm text-gray-500">
+                      {p.type} · {p.size}
                     </div>
+                    <div className="font-semibold">{p.brand}</div>
+                    <div className="text-indigo-600 font-bold">${p.price}</div>
                   </div>
-                ))}
-              </div>
-
-              <button
-                onClick={() => handleNext(cat, length)}
-                className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white px-3 py-2 rounded-full shadow z-10"
-              >
-                ▶
-              </button>
+                </div>
+              ))}
             </div>
           </section>
-        );
-      })}
+        ));
+      })()}
     </div>
   );
 };

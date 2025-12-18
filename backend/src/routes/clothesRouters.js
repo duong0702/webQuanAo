@@ -16,6 +16,15 @@ router.get("/", getAllClothes);
 router.get("/all", getAllClothes);
 router.get("/:id", getClothesById);
 // create/update/delete are admin-only
+// Support both POST / and POST /create for backward compatibility
+router.post(
+  "/",
+  authMiddleware,
+  isAdmin,
+  upload.array("images", 6),
+  createClothes
+);
+
 router.post(
   "/create",
   authMiddleware,

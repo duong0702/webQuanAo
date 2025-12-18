@@ -4,57 +4,37 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Filter } from "lucide-react";
 
-const StatsAndFilters = ({ cart = [], onFilteredChange }) => {
+const StatsAndFilters = ({
+  cart = [],
+  onFilteredChange,
+  onFilterKeyChange,
+}) => {
   const [filter, setFilter] = useState("all");
 
-  // Chỉnh classifyType để dùng đúng field của cart
-  const classifyType = (item) => {
-    if (!item) return "unknown";
-    const typeField = item.type || item.name || "";
-    const type = typeField.toString().trim().toLowerCase();
+  // Map logical groups: hoodie/polo/shirt => shirt, pant/short => pant
+  const shirtTypes = ["hoodie", "polo", "shirt"];
+  const pantTypes = ["pant", "short"];
 
-    const shirtTypes = ["hoodie", "polo", "shirt"];
-    const pantTypes = ["pant", "short"];
-
-    if (shirtTypes.some((t) => type.includes(t))) return "shirt";
-    if (pantTypes.some((t) => type.includes(t))) return "pant";
-
-    return "unknown";
-  };
-
-  const itemsWithIndex = cart.map((item, i) => ({
-    item,
-    i,
-    type: classifyType(item),
-  }));
-
-  const shirtClothesCount = itemsWithIndex.filter(
-    (t) => t.type === "shirt"
+  const shirtClothesCount = cart.filter((item) =>
+    shirtTypes.includes(item.type)
   ).length;
-  const pantClothesCount = itemsWithIndex.filter(
-    (t) => t.type === "pant"
+  const pantClothesCount = cart.filter((item) =>
+    pantTypes.includes(item.type)
   ).length;
 
   useEffect(() => {
-    const filteredIndices = itemsWithIndex
-      .filter((t) => (filter === "all" ? true : t.type === filter))
-      .map((t) => t.i);
+    const filteredIndices = cart
+      .map((item, i) => ({ item, i }))
+      .filter(({ item }) => {
+        if (filter === "all") return true;
+        if (filter === "shirt") return shirtTypes.includes(item.type);
+        if (filter === "pant") return pantTypes.includes(item.type);
+        return item.type === filter;
+      })
+      .map(({ i }) => i);
 
-    // Debug log
-    console.log("Current filter:", filter);
-    console.log(
-      "Filtered items:",
-      filteredIndices.map((i) => cart[i]?.name)
-    );
-    console.log(
-      "cart types:",
-      itemsWithIndex.map((t) => t.type)
-    );
-    console.log("cart items:", cart);
-
-    if (typeof onFilteredChange === "function") {
-      onFilteredChange(filteredIndices);
-    }
+    onFilteredChange?.(filteredIndices);
+    onFilterKeyChange?.(filter);
   }, [cart, filter]);
 
   return (

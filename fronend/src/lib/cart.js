@@ -32,11 +32,12 @@ export const addToCart = (item) => {
   // default qty to 1 if not provided
   const qtyToAdd = typeof item.qty === "number" && item.qty > 0 ? item.qty : 1;
 
-  // match by product id + selected options to deduplicate similar items
+  // match by product id + selected options + type to deduplicate similar items
   const match = (i) =>
     i.product === item.product &&
     (i.selectedColor || "") === (item.selectedColor || "") &&
-    (i.selectedSize || "") === (item.selectedSize || "");
+    (i.selectedSize || "") === (item.selectedSize || "") &&
+    (i.type || "") === (item.type || "");
 
   const exist = cart.find(match);
 
@@ -47,6 +48,7 @@ export const addToCart = (item) => {
       cartId: crypto.randomUUID(), // ⭐ Unique ID for each cart item
       product: item.product,
       name: item.name || "",
+      type: item.type || "",
       image: item.image || "",
       price: item.price || 0,
       qty: qtyToAdd,

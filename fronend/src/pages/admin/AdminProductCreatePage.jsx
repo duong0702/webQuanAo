@@ -11,7 +11,7 @@ const AdminProductCreatePage = () => {
   const [form, setForm] = useState({
     name: "",
     price: "",
-    category: "",
+    type: "",
     image: "",
     description: "",
   });
@@ -23,7 +23,7 @@ const AdminProductCreatePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.name || !form.price || !form.category || !form.image) {
+    if (!form.name || !form.price || !form.type || !form.image) {
       alert("Vui lòng điền đầy đủ thông tin bắt buộc");
       return;
     }
@@ -33,7 +33,7 @@ const AdminProductCreatePage = () => {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        "http://localhost:3000/api/products",
+        "http://localhost:3000/api/clothes",
         {
           ...form,
           price: Number(form.price),
@@ -101,12 +101,12 @@ const AdminProductCreatePage = () => {
           {/* Danh mục */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Danh mục <span className="text-red-500">*</span>
+              Loại (type) <span className="text-red-500">*</span>
             </label>
             <input
-              name="category"
-              placeholder="VD: Áo, Quần, Giày..."
-              value={form.category}
+              name="type"
+              placeholder="VD: shirt | pant | hoodie"
+              value={form.type}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-600"
               onChange={handleChange}
               required

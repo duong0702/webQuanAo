@@ -163,8 +163,8 @@ const HomeHeader = () => {
                 Admin Orders
               </Link>
 
-              <Link
-                to="/admin/products/new"
+              <a
+                href="http://localhost:5173/admin/products/"
                 className={`flex items-center px-3 py-2 rounded-md transition-colors duration-200
                   ${
                     location.pathname === "/admin/products/new"
@@ -174,8 +174,8 @@ const HomeHeader = () => {
                 `}
               >
                 <FaClipboardList className="mr-2" />
-                Tạo sản phẩm
-              </Link>
+                Admin Product
+              </a>
             </>
           )}
 

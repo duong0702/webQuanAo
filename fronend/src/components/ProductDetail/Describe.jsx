@@ -37,6 +37,7 @@ const Describe = ({ product }) => {
       addToCart({
         product: product._id,
         name: product.brand || product.title || "Sản phẩm",
+        type: product.type,
         image: product.images?.[0] || product.image,
         price: product.price,
         qty,
@@ -51,7 +52,16 @@ const Describe = ({ product }) => {
   };
 
   const buyNow = () => {
-    addToCart();
+    addToCart({
+      product: product._id,
+      name: product.brand || product.title || "Sản phẩm",
+      type: product.type,
+      image: product.images?.[0] || product.image,
+      price: product.price,
+      qty,
+      selectedColor,
+      selectedSize,
+    });
     navigate("/pay");
   };
 

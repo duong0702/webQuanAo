@@ -115,7 +115,7 @@ const AdminProductsPage = () => {
                   </td>
                   <td className="p-4 text-gray-600">
                     <span className="px-3 py-1 bg-gray-200 rounded-full text-xs font-medium">
-                      {p.category || "N/A"}
+                      {p.type || "N/A"}
                     </span>
                   </td>
                   <td className="p-4 text-center space-x-2">

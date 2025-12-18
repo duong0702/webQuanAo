@@ -6,11 +6,12 @@ import { ShoppingCart, Trash2 } from "lucide-react";
 import StatsAndFilters from "@/components/Cart/StatsAndFilters";
 import ClothesListPagination from "@/components/Cart/ClothesListPagination";
 import { visibleClothesLimit } from "@/lib/data";
+import EmptyState from "@/components/EmptyState";
 
 const CartPage = () => {
   const [cart, setCart] = useState([]);
   const [selected, setSelected] = useState([]);
-  const [filteredIndices, setFilteredIndices] = useState([]);
+  const [filterKey, setFilterKey] = useState("all");
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
 
@@ -55,10 +56,38 @@ const CartPage = () => {
   }, 0);
 
   const pageSize = visibleClothesLimit || 5;
-  const filtered = filteredIndices.map((i) => cart[i]).filter(Boolean);
+
+  const classifyType = (item) => {
+    if (!item) return "unknown";
+    const cat = (item.category || item.type || item.name || "")
+      .toString()
+      .trim()
+      .toLowerCase();
+    const shirtTypes = ["hoodie", "polo", "shirt"];
+    const pantTypes = ["pant", "short"];
+    if (cat && shirtTypes.some((t) => cat.includes(t))) return "shirt";
+    if (cat && pantTypes.some((t) => cat.includes(t))) return "pant";
+    return "unknown";
+  };
+
+  const filtered = cart.filter((item) =>
+    filterKey === "all" ? true : classifyType(item) === filterKey
+  );
+
+  const shirtTypes = ["hoodie", "polo", "shirt"];
+  const pantTypes = ["pant", "short"];
+
+  const shirtCount = cart.filter((item) =>
+    shirtTypes.includes(item.type)
+  ).length;
+  const pantCount = cart.filter((item) => pantTypes.includes(item.type)).length;
+
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  if (page > totalPages) setPage(totalPages);
   const pageItems = filtered.slice((page - 1) * pageSize, page * pageSize);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
 
   const removeSelected = () => {
     const remain = cart.filter((item) => !selected.includes(item.cartId));
@@ -88,13 +117,32 @@ const CartPage = () => {
 
   if (cart.length === 0) {
     return (
-      <>
-        <HomeHeader />
-        <div className="container mx-auto py-16 text-center">
-          🛒 Giỏ hàng trống
+      <div className="min-h-screen w-full bg-[#f9fafb] relative">
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: `
+        linear-gradient(to right, #d1d5db 1px, transparent 1px),
+        linear-gradient(to bottom, #d1d5db 1px, transparent 1px)
+      `,
+            backgroundSize: "32px 32px",
+            WebkitMaskImage:
+              "radial-gradient(ellipse 80% 80% at 0% 100%, #000 50%, transparent 90%)",
+            maskImage:
+              "radial-gradient(ellipse 80% 80% at 0% 100%, #000 50%, transparent 90%)",
+          }}
+        />
+
+        <div className="flex flex-col min-h-screen relative z-10">
+          <HomeHeader />
+
+          <main className="container mx-auto px-4 py-10 flex-1 flex items-center justify-center">
+            <EmptyState filter={filterKey} />
+          </main>
+
+          <HomeFooter />
         </div>
-        <HomeFooter />
-      </>
+      </div>
     );
   }
 
@@ -125,16 +173,13 @@ const CartPage = () => {
 
             <StatsAndFilters
               cart={cart}
-              onFilteredChange={(indices) => {
-                setFilteredIndices(indices);
+              onFilterKeyChange={(key) => {
+                setFilterKey(key);
                 setPage(1);
               }}
             />
 
-            <div className="text-sm text-gray-600 mt-2">
-              Đang có <strong>{cart.length}</strong> sản phẩm trong giỏ hàng •
-              Hiển thị <strong>{filtered.length}</strong>
-            </div>
+            {/* Stats shown in StatsAndFilters; no duplicate counts here */}
           </div>
 
           <div className="space-y-4">

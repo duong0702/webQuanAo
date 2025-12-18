@@ -16,10 +16,9 @@ const AdminProductEditPage = () => {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await axios.get(
-          `http://localhost:3000/api/products/${id}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const res = await axios.get(`http://localhost:3000/api/clothes/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         setForm(res.data);
       } catch (err) {
@@ -43,7 +42,7 @@ const AdminProductEditPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.name || !form.price || !form.category || !form.image) {
+    if (!form.name || !form.price || !form.type || !form.image) {
       alert("Vui lòng điền đầy đủ thông tin bắt buộc");
       return;
     }
@@ -53,7 +52,7 @@ const AdminProductEditPage = () => {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        `http://localhost:3000/api/products/${id}`,
+        `http://localhost:3000/api/clothes/${id}`,
         {
           ...form,
           price: Number(form.price),
@@ -119,11 +118,11 @@ const AdminProductEditPage = () => {
           {/* Danh mục */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Danh mục <span className="text-red-500">*</span>
+              Loại (type) <span className="text-red-500">*</span>
             </label>
             <input
-              name="category"
-              value={form.category}
+              name="type"
+              value={form.type}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-600"
               onChange={handleChange}
               required
