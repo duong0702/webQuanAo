@@ -1,14 +1,19 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 import clothesRouter from "./routes/clothesRouters.js";
 import authRoutes from "./routes/authRouters.js";
 import orderRoutes from "./routes/orderRouters.js";
-import uploadRoute from "./controllers/routeUpload.js";
+// import uploadRoute from "./controllers/routeUpload.js";
 import { connectDB } from "./config/db.js";
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,7 +25,7 @@ console.log("Cloudinary key:", process.env.CLOUDINARY_API_KEY);
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/upload", uploadRoute);
+// app.use("/api/upload", uploadRoute);
 app.use("/api/clothes", clothesRouter);
 app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);

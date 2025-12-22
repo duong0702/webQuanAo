@@ -104,7 +104,10 @@ const PayPage = () => {
         }
       );
 
-      toast.success("🎉 Đặt hàng thành công");
+      console.log("Order placed successfully!");
+
+      // Show success notification
+      toast.success("🎉 Chúc mừng bạn đã đặt hàng thành công");
 
       // Remove only checked-out items, keep remaining items in cart
       const userData = localStorage.getItem("user");
@@ -126,8 +129,11 @@ const PayPage = () => {
 
       localStorage.setItem(cartKey, JSON.stringify(remain));
       localStorage.removeItem("checkout_items");
+
+      // Navigate to my-orders
       navigate("/my-orders");
     } catch (err) {
+      console.error("Order error:", err);
       toast.error("Đặt hàng thất bại");
     } finally {
       setLoading(false);
@@ -166,7 +172,7 @@ const PayPage = () => {
           )}
 
           <textarea
-            placeholder="Địa chỉ giao hàng (ít nhất 5 từ)"
+            placeholder="Địa chỉ giao hàng"
             className="w-full border p-3 rounded mt-4"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
@@ -176,7 +182,7 @@ const PayPage = () => {
           )}
 
           <textarea
-            placeholder="Lời nhắn (tùy chọn)"
+            placeholder="Lời nhắn"
             className="w-full border p-3 rounded mt-4 resize-none"
             rows="3"
             value={message}

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 
-const categories = ["hoodie", "polo", "shirt", "pant", "short"];
+const categories = ["hoodie", "polo", "jacket", "t-shirt", "pant", "short"];
 const sizes = ["s", "m", "l", "xl"];
 
 const HomeFilter = ({ onApplyFilter, onJump }) => {
@@ -72,9 +72,9 @@ const HomeFilter = ({ onApplyFilter, onJump }) => {
     <div className="bg-white rounded-lg shadow-md px-6 py-5 border border-gray-100">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
-        <h3 className="font-bold text-lg text-gray-900">Lọc sản phẩm</h3>
+        <h3 className="font-bold text-lg text-gray-900">Danh sách sản phẩm</h3>
         <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-          Lọc tức thời
+          Hãy mua sắm theo sở thích của bạn
         </div>
       </div>
 
@@ -180,6 +180,7 @@ const HomeFilter = ({ onApplyFilter, onJump }) => {
               <option value="20-30">$20 - $30</option>
               <option value="30-40">$30 - $40</option>
               <option value="40-50">$40 - $50</option>
+              <option value="50+">&gt; $50</option>
             </select>
             {priceRange !== "all" && (
               <div className="mt-2 text-xs text-indigo-600 font-medium">

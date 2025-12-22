@@ -1,24 +1,29 @@
 import dotenv from "dotenv";
-dotenv.config();
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 import mongoose from "mongoose";
 import Clothes from "../models/Clothes.js";
 import { connectDB } from "../config/db.js";
 
-dotenv.config();
-
 const seedClothes = async () => {
   try {
     await connectDB();
 
-    await Clothes.deleteMany();
+    // Không xóa dữ liệu cũ - chỉ thêm sản phẩm mới
+    // await Clothes.deleteMany();
 
-    await Clothes.insertMany([
+    const seedData = [
       {
         name: "Áo khoác Basic",
         price: 35,
         color: "grey",
-        type: "shirt",
+        type: "jacket",
         size: ["s", "m", "l"],
         images: [
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783769/xam1_csrnfk.jpg",
@@ -32,7 +37,7 @@ const seedClothes = async () => {
         name: "Áo da cao cấp",
         price: 40,
         color: ["black", "yellow"],
-        type: "shirt",
+        type: "t-shirt",
         size: ["m", "l"],
         images: [
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783770/loai1_hw2okb.jpg",
@@ -45,7 +50,7 @@ const seedClothes = async () => {
         name: "Áo khoác da bò ",
         price: 45,
         color: "blue",
-        type: "shirt",
+        type: "jacket",
         size: ["m", "xl"],
         images: [
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783773/loai5_rjc6uy.jpg",
@@ -58,7 +63,7 @@ const seedClothes = async () => {
         name: " Áo caro mùa hè ",
         price: 25,
         color: "yellow-back",
-        type: "shirt",
+        type: "t-shirt",
         size: ["s", "l"],
         images: [
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783774/caro1_d8iyje.jpg",
@@ -72,7 +77,7 @@ const seedClothes = async () => {
         name: " Áo teddy bear",
         price: 15,
         color: "black",
-        type: "shirt",
+        type: "t-shirt",
         size: ["m", "l", "xl"],
         images: [
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783769/loai10_jspn4z.jpg",
@@ -86,7 +91,7 @@ const seedClothes = async () => {
         price: 25,
         color: "yellow",
         type: "hoodie",
-        size: "l",
+        size: ["s", "m", "xl"],
         images: [
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783770/tr1_pv8bvu.jpg",
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783770/tr1_pv8bvu.jpg",
@@ -100,7 +105,7 @@ const seedClothes = async () => {
         price: 45,
         color: "black",
         type: "hoodie",
-        size: "xl",
+        size: ["m", "l", "xl"],
 
         image:
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783772/mk1_vrtzky.jpg", // ảnh đại diện
@@ -133,7 +138,7 @@ const seedClothes = async () => {
         price: 38,
         color: ["red", "black", "grey"],
         type: "hoodie",
-        size: "l",
+        size: ["s", "m", "l"],
         images: [
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783776/ico4_fkvte4.jpg",
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783776/ico3_qnuwtg.jpg",
@@ -160,7 +165,7 @@ const seedClothes = async () => {
         price: 32,
         color: ["white", "green", "black"],
         type: "pant",
-        size: "m",
+        size: ["m", "xl"],
         images: [
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783777/kaki1_popeft.jpg",
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783777/kaki2_nswaqb.jpg",
@@ -228,7 +233,7 @@ const seedClothes = async () => {
         price: 32,
         color: "yellow",
         type: "polo",
-        size: "xl",
+        size: ["s", "m", "xl"],
         images: [
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783864/soc1_j2r7in.jpg",
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783864/soc2_pdncqn.jpg",
@@ -256,7 +261,7 @@ const seedClothes = async () => {
         price: 26,
         color: ["black", "yellow"],
         type: "short",
-        size: "l",
+        size: ["s", "m", "xl"],
         images: [
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783882/tui1_ilzt3h.jpg",
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783882/tui2_ivkzll.jpg",
@@ -270,7 +275,7 @@ const seedClothes = async () => {
         price: 32,
         color: "blue",
         type: "short",
-        size: "m",
+        size: ["s", "m", "xl"],
         images: [
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765783939/bo1_xwwp4w.jpg",
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765784094/bo2_wpynnd.jpg",
@@ -282,7 +287,7 @@ const seedClothes = async () => {
         price: 28,
         color: "white",
         type: "short",
-        size: "m",
+        size: ["s", "m", "xl"],
         images: [
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765784095/sao1_rs5729.jpg",
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765784095/sao2_unyd5d.jpg",
@@ -294,7 +299,7 @@ const seedClothes = async () => {
         price: 30,
         color: ["black", "yellow", "blue"],
         type: "short",
-        size: "s",
+        size: ["s", "l"],
         images: [
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765784095/ka1_pvxupo.jpg",
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765784095/ka2_e2azyg.jpg",
@@ -302,7 +307,31 @@ const seedClothes = async () => {
           "https://res.cloudinary.com/dsoluhht8/image/upload/v1765784095/k3_rf6uy8.jpg",
         ],
       },
-    ]);
+    ];
+
+    // Chỉ insert sản phẩm nếu chưa tồn tại
+    for (const item of seedData) {
+      const exists = await Clothes.findOne({ name: item.name });
+      if (!exists) {
+        // 🔧 Normalize images data
+        item.mainImage =
+          item.mainImage ||
+          item.image ||
+          (Array.isArray(item.images) && item.images.length > 0
+            ? item.images[0]
+            : "");
+
+        // Ensure images is array of strings
+        if (!Array.isArray(item.images)) {
+          item.images = item.mainImage ? [item.mainImage] : [];
+        }
+
+        // Remove old field
+        delete item.image;
+
+        await Clothes.create(item);
+      }
+    }
 
     console.log("✅ Seed clothes thành công");
     process.exit();

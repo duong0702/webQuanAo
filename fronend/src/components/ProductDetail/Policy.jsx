@@ -30,7 +30,7 @@ const Policy = ({ product }) => {
   /* =======================
      TYPE FROM BACKEND
      ======================= */
-  const isTop = ["hoodie", "polo", "shirt"].includes(product?.type);
+  const isTop = ["hoodie", "polo", "jacket", "t-shirt"].includes(product?.type);
   const isBottom = ["pant", "short"].includes(product?.type);
 
   return (
@@ -145,6 +145,17 @@ const Policy = ({ product }) => {
               icon={isBottom ? <Layers /> : <Shirt />}
               title="Mô tả sản phẩm"
             />
+
+            {/* =======================
+               MÔ TẢ TỰ DO TỪ ADMIN
+               ======================= */}
+            {product?.description && (
+              <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                  {product.description}
+                </p>
+              </div>
+            )}
 
             {/* =======================
                ÁO

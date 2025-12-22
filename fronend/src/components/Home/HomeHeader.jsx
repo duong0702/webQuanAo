@@ -6,13 +6,49 @@ import {
   FaShoppingCart,
   FaClipboardList,
   FaSignInAlt,
-  FaClipboard,
 } from "react-icons/fa";
+
+const megaMenu = {
+  all: [
+    { label: "Sản phẩm mới", query: { status: "new" } },
+    { label: "Hàng bán chạy", query: { status: "hot" } },
+    { label: "OUTLET - Sale up to 50%", query: { status: "sale" } },
+  ],
+  shirt: [
+    { label: "Áo Thun", query: { type: "t-shirt" } },
+    { label: "Áo Polo", query: { type: "polo" } },
+    { label: "Hoodie", query: { type: "hoodie" } },
+    { label: "Áo Khoác", query: { type: "jacket" } },
+  ],
+  pant: [
+    { label: "Quần Jean", query: { type: "pant" } },
+    { label: "Quần Short", query: { type: "short" } },
+  ],
+};
 
 const HomeHeader = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const goWithQuery = (queryObj = {}) => {
+    const params = new URLSearchParams();
 
+    Object.entries(queryObj).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((v) => params.append(key, v)); // Support multi-type
+      } else {
+        params.set(key, value);
+      }
+    });
+
+    navigate(params.toString() ? `/?${params.toString()}` : "/");
+
+    setTimeout(() => {
+      const section = document.getElementById("product-list");
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 200);
+  };
   const [loggedIn, setLoggedIn] = useState(() => {
     return Boolean(
       localStorage.getItem("token") || localStorage.getItem("user")
@@ -73,6 +109,7 @@ const HomeHeader = () => {
   const navItems = loggedIn
     ? [
         { name: "Home", path: "/", icon: <FaHome className="mr-2" /> },
+
         {
           name: "Cart",
           path: "/cart",
@@ -126,7 +163,7 @@ const HomeHeader = () => {
           </div>
         </div>
 
-        <nav className="flex items-center gap-6 text-sm">
+        {/* <nav className="flex items-center gap-6 text-sm">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
@@ -159,7 +196,7 @@ const HomeHeader = () => {
                   }
                 `}
               >
-                <FaClipboard className="mr-2" />
+                <FaClipboardList className="mr-2" />
                 Admin Orders
               </Link>
 
@@ -172,6 +209,198 @@ const HomeHeader = () => {
                       : "text-indigo-600 hover:bg-indigo-50 font-semibold"
                   }
                 `}
+              >
+                <FaClipboardList className="mr-2" />
+                Admin Product
+              </a>
+            </>
+          )}
+
+          {loggedIn && (
+            <div className="flex items-center gap-3 pl-3 border-l border-gray-300">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold text-xs">
+                  {userName.charAt(0).toUpperCase()}
+                </div>
+                <span className="text-gray-700 font-medium max-w-xs truncate">
+                  {userName}
+                </span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="flex items-center px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 hover:text-indigo-600 transition-colors"
+              >
+                <FaSignInAlt className="mr-2 transform rotate-180" />
+                Logout
+              </button>
+            </div>
+          )}
+        </nav> */}
+        <nav className="flex items-center gap-6 text-sm">
+          {/* HOME */}
+          <Link
+            to="/"
+            className={`flex items-center px-3 py-2 rounded-md transition-colors duration-200
+      ${
+        location.pathname === "/"
+          ? "bg-indigo-600 text-white"
+          : "text-gray-700 hover:bg-gray-100 hover:text-indigo-600"
+      }
+    `}
+          >
+            <FaHome className="mr-2" />
+            Home
+          </Link>
+
+          {/* 🔥 MEGA MENU – SẢN PHẨM (NGAY SAU HOME) */}
+          <div className="relative group">
+            <button
+              type="button"
+              className="flex items-center px-3 py-2 rounded-md font-semibold
+        text-gray-700 hover:bg-gray-100 hover:text-indigo-600 transition"
+            >
+              Sản phẩm
+              <svg
+                className="w-4 h-4 ml-1 transition-transform duration-300 group-hover:rotate-180"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            {/* MEGA MENU CONTENT */}
+            <div
+              className="absolute left-0 top-full mt-2 w-[900px]
+        bg-white border rounded-lg shadow-xl
+        opacity-0 invisible group-hover:opacity-100 group-hover:visible
+        transition-all duration-300 z-50"
+            >
+              <div className="grid grid-cols-3 gap-8 p-8">
+                {/* CỘT 1 */}
+                <div>
+                  <button
+                    onClick={() => goWithQuery({})}
+                    className="font-bold text-lg mb-4 hover:text-indigo-600 block w-full text-left"
+                  >
+                    TẤT CẢ SẢN PHẨM
+                  </button>
+                  {megaMenu.all.map((i) => (
+                    <button
+                      key={i.label}
+                      onClick={() => goWithQuery(i.query)}
+                      className="block w-full text-left py-2 hover:text-indigo-600"
+                    >
+                      {i.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* CỘT 2 */}
+                <div>
+                  <button
+                    onClick={() =>
+                      goWithQuery({
+                        type: ["t-shirt", "polo", "hoodie", "jacket"],
+                      })
+                    }
+                    className="font-bold text-lg mb-4 hover:text-indigo-600 block w-full text-left"
+                  >
+                    ÁO NAM
+                  </button>
+                  {megaMenu.shirt.map((i) => (
+                    <button
+                      key={i.label}
+                      onClick={() => goWithQuery(i.query)}
+                      className="block w-full text-left py-2 hover:text-indigo-600"
+                    >
+                      {i.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* CỘT 3 */}
+                <div>
+                  <button
+                    onClick={() =>
+                      goWithQuery({
+                        type: ["pant", "short"],
+                      })
+                    }
+                    className="font-bold text-lg mb-4 hover:text-indigo-600 block w-full text-left"
+                  >
+                    QUẦN NAM
+                  </button>
+                  {megaMenu.pant.map((i) => (
+                    <button
+                      key={i.label}
+                      onClick={() => goWithQuery(i.query)}
+                      className="block w-full text-left py-2 hover:text-indigo-600"
+                    >
+                      {i.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* CÁC MENU CÒN LẠI (Cart, My Orders, Sign In...) */}
+          {navItems
+            .filter((item) => item.name !== "Home")
+            .map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className={`flex items-center px-3 py-2 rounded-md transition-colors duration-200
+            ${
+              isActive
+                ? "bg-indigo-600 text-white"
+                : "text-gray-700 hover:bg-gray-100 hover:text-indigo-600"
+            }
+          `}
+                >
+                  {item.icon}
+                  {item.name}
+                </Link>
+              );
+            })}
+
+          {/* ⬇⬇⬇ GIỮ NGUYÊN 100% PHẦN DƯỚI ⬇⬇⬇ */}
+
+          {loggedIn && userRole === "admin" && (
+            <>
+              <Link
+                to="/admin/orders"
+                className={`flex items-center px-3 py-2 rounded-md transition-colors duration-200
+          ${
+            location.pathname === "/admin/orders"
+              ? "bg-red-600 text-white"
+              : "text-red-600 hover:bg-red-50 font-semibold"
+          }
+        `}
+              >
+                <FaClipboardList className="mr-2" />
+                Admin Orders
+              </Link>
+
+              <a
+                href="http://localhost:5173/admin/products/"
+                className={`flex items-center px-3 py-2 rounded-md transition-colors duration-200
+          ${
+            location.pathname === "/admin/products/new"
+              ? "bg-indigo-600 text-white"
+              : "text-indigo-600 hover:bg-indigo-50 font-semibold"
+          }
+        `}
               >
                 <FaClipboardList className="mr-2" />
                 Admin Product

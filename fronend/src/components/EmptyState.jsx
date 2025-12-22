@@ -4,7 +4,11 @@ import { Circle } from "lucide-react";
 
 const EmptyState = ({ filter = "all" }) => {
   const displayType =
-    filter === "shirt" ? "áo" : filter === "pant" ? "quần" : null;
+    filter === "shirt" || filter === "jacket" || filter === "t-shirt"
+      ? "áo"
+      : filter === "pant"
+      ? "quần"
+      : null;
 
   return (
     <div>

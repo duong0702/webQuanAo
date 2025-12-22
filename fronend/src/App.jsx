@@ -17,6 +17,7 @@ import AdminProductCreatePage from "./pages/admin/AdminProductCreatePage.jsx";
 import AdminProductEditPage from "./pages/admin/AdminProductEditPage.jsx";
 import AuthGuard from "./components/AuthGuard.jsx";
 import AdminRoute from "./components/AdminRoute.jsx";
+import "aos/dist/aos.css";
 
 function App() {
   return (

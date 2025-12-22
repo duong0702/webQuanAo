@@ -26,32 +26,39 @@ const ProductDetail = () => {
 
   if (!product) return <div className="p-8">Loading...</div>;
 
-  const images =
-    product.images && product.images.length
-      ? product.images
-      : [product.image].filter(Boolean);
-
   return (
-    <div className="flex flex-col min-h-screen">
-      <HomeHeader />
+    <div className="relative min-h-screen w-full bg-white">
+      {/* BACKGROUND LAYER */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          backgroundImage: `
+          radial-gradient(circle at top center,
+            rgba(59,130,246,0.25),
+            transparent 70%)
+        `,
+        }}
+      />
 
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <Product images={images} />
-          </div>
+      {/* CONTENT LAYER */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <HomeHeader />
 
-          <div>
+        <main className="flex-1 container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Product images={product.images} />
             <Describe product={product} />
           </div>
-        </div>
 
-        <Policy product={product} />
+          {/* POLICY */}
+          <Policy product={product} />
 
-        <Similar type={product.type} />
-      </main>
+          {/* SIMILAR */}
+          <Similar type={product.type} />
+        </main>
 
-      <HomeFooter />
+        <HomeFooter />
+      </div>
     </div>
   );
 };

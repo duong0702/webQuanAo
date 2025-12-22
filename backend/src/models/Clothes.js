@@ -2,13 +2,26 @@ import mongoose from "mongoose";
 
 const clothesSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-    color: { type: [String], required: true },
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    price: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+
+    color: {
+      type: [String],
+      default: [],
+    },
 
     type: {
       type: String,
-      enum: ["hoodie", "polo", "shirt", "pant", "short"],
+      enum: ["hoodie", "polo", "jacket", "t-shirt", "pant", "short"],
       required: true,
     },
 
@@ -18,9 +31,33 @@ const clothesSchema = new mongoose.Schema(
       required: true,
     },
 
-    images: {
-      type: [String],
+    mainImage: {
+      type: String,
       required: true,
+    },
+
+    images: [
+      {
+        url: {
+          type: String,
+          required: true,
+        },
+        isMain: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
+
+    description: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    status: {
+      type: [String],
+      enum: ["new", "hot", "sale", "limited"],
+      default: [],
     },
   },
   { timestamps: true }

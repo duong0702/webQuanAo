@@ -3,6 +3,7 @@ import HomeHeader from "@/components/Home/HomeHeader";
 import HomeFooter from "@/components/Home/HomeFooter";
 import { useNavigate } from "react-router-dom";
 import { ShoppingCart, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import StatsAndFilters from "@/components/Cart/StatsAndFilters";
 import ClothesListPagination from "@/components/Cart/ClothesListPagination";
 import { visibleClothesLimit } from "@/lib/data";
@@ -63,7 +64,7 @@ const CartPage = () => {
       .toString()
       .trim()
       .toLowerCase();
-    const shirtTypes = ["hoodie", "polo", "shirt"];
+    const shirtTypes = ["hoodie", "polo", "jacket", "t-shirt"];
     const pantTypes = ["pant", "short"];
     if (cat && shirtTypes.some((t) => cat.includes(t))) return "shirt";
     if (cat && pantTypes.some((t) => cat.includes(t))) return "pant";
@@ -74,7 +75,7 @@ const CartPage = () => {
     filterKey === "all" ? true : classifyType(item) === filterKey
   );
 
-  const shirtTypes = ["hoodie", "polo", "shirt"];
+  const shirtTypes = ["hoodie", "polo", "jacket", "t-shirt"];
   const pantTypes = ["pant", "short"];
 
   const shirtCount = cart.filter((item) =>
@@ -169,8 +170,6 @@ const CartPage = () => {
 
         <main className="container mx-auto px-4 py-10 flex-1">
           <div className="mb-4">
-            <h1 className="text-2xl font-semibold mb-2">Giỏ hàng</h1>
-
             <StatsAndFilters
               cart={cart}
               onFilterKeyChange={(key) => {
@@ -186,30 +185,43 @@ const CartPage = () => {
             {pageItems.map((item) => (
               <div
                 key={item.cartId}
-                className={`flex items-center gap-4 p-4 border rounded-xl ${
-                  selected.includes(item.cartId) ? "ring-2 ring-indigo-500" : ""
+                onClick={() => toggle(item.cartId)}
+                className={`flex items-center gap-4 p-4 border rounded-xl cursor-pointer transition-all duration-300 group ${
+                  selected.includes(item.cartId)
+                    ? "ring-2 ring-indigo-500 bg-indigo-50"
+                    : "hover:shadow-lg hover:border-indigo-300 bg-white"
                 }`}
               >
                 <input
                   type="checkbox"
                   checked={selected.includes(item.cartId)}
                   onChange={() => toggle(item.cartId)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="cursor-pointer"
                 />
 
-                <img
-                  src={item?.image || item?.images?.[0]}
-                  className="w-20 h-20 object-cover rounded"
-                />
-
-                <div className="flex-1">
-                  <div className="font-medium">{item.name}</div>
-                  <div className="text-sm text-gray-500">
-                    Màu: {item.selectedColor} • Size: {item.selectedSize}
-                  </div>
-                  <div className="text-sm">SL: {item.qty}</div>
+                <div className="relative overflow-hidden rounded w-20 h-20">
+                  <img
+                    src={item?.image}
+                    className="w-20 h-20 object-cover rounded transition-all duration-500 group-hover:scale-110 group-hover:brightness-110"
+                  />
                 </div>
 
-                <div className="font-semibold">{item.price * item.qty}$</div>
+                <div className="flex-1 transition-all duration-300">
+                  <div className="font-medium group-hover:text-indigo-600 transition-colors duration-300">
+                    {item.name}
+                  </div>
+                  <div className="text-sm text-gray-500 group-hover:text-gray-700 transition-colors duration-300">
+                    Màu: {item.selectedColor} • Size: {item.selectedSize}
+                  </div>
+                  <div className="text-sm group-hover:text-indigo-700 transition-colors duration-300">
+                    SL: {item.qty}
+                  </div>
+                </div>
+
+                <div className="font-semibold group-hover:text-indigo-600 transition-colors duration-300">
+                  {item.price * item.qty}$
+                </div>
               </div>
             ))}
           </div>
@@ -242,7 +254,7 @@ const CartPage = () => {
                 className="px-6 py-2 bg-indigo-600 text-white rounded-lg flex items-center gap-2 disabled:opacity-40"
               >
                 <ShoppingCart size={18} />
-                Thanh toán
+                Đặt hàng
               </button>
             </div>
           </div>

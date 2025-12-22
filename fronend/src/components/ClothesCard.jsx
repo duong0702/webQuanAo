@@ -41,7 +41,15 @@ const ClothesCard = ({ clothes, index, isSelected, toggleSelect }) => {
           </h3>
 
           <p className="text-sm text-muted-foreground truncate">
-            Màu: {clothes.color} • Size: {clothes.size} • {clothes.price} VND
+            Màu:{" "}
+            {Array.isArray(clothes.color)
+              ? clothes.color.join(", ")
+              : clothes.color}{" "}
+            • Size:{" "}
+            {Array.isArray(clothes.size)
+              ? clothes.size.map((s) => s.toString().toUpperCase()).join(" - ")
+              : (clothes.size || "").toString().toUpperCase()}{" "}
+            • {clothes.price} VND
           </p>
         </div>
 

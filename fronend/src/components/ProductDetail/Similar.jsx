@@ -8,7 +8,7 @@ const Similar = ({ type }) => {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/api/clothes/all`);
+        const res = await axios.get("http://localhost:3000/api/clothes/all");
         const all = res.data.clothes || [];
         setItems(all.filter((p) => p.type === type).slice(0, 6));
       } catch (err) {
@@ -22,23 +22,42 @@ const Similar = ({ type }) => {
 
   return (
     <div className="mt-6">
-      <h3 className="text-lg font-semibold mb-3">Sản phẩm tương tự</h3>
+      <h3 className="text-lg font-semibold mb-4">Sản phẩm tương tự</h3>
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {items.map((it) => (
           <Link
             key={it._id}
             to={`/product/${it._id}`}
-            className="block bg-white p-2 rounded shadow-sm"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="
+              group block bg-white p-2 rounded-xl
+              transition-all duration-300 ease-out
+              hover:shadow-xl hover:-translate-y-1
+            "
           >
-            <img
-              src={it.images?.[0] || it.image}
-              alt={it.title || it.name}
-              className="w-full h-40 object-cover rounded"
-            />
-            <div className="mt-2 text-sm text-gray-700">
-              {it.brand || it.title}
+            {/* IMAGE */}
+            <div className="overflow-hidden rounded-lg">
+              <img
+                src={it.mainImage || it.image}
+                alt={it.title || it.name}
+                className="
+                  w-full h-40 object-cover
+                  transition-transform duration-500 ease-out
+                  group-hover:scale-110
+                  group-hover:brightness-110
+                "
+              />
             </div>
-            <div className="text-indigo-600 font-semibold">${it.price}</div>
+
+            {/* INFO */}
+            <div className="mt-2 text-sm text-gray-700 line-clamp-2">
+              {it.brand || it.title || it.name}
+            </div>
+
+            <div className="text-indigo-600 font-semibold mt-1">
+              {it.price.toLocaleString()}đ
+            </div>
           </Link>
         ))}
       </div>
