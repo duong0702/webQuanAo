@@ -30,6 +30,7 @@ const HomeHeader = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const goWithQuery = (queryObj = {}) => {
+    console.log("goWithQuery:", queryObj);
     const params = new URLSearchParams();
 
     Object.entries(queryObj).forEach(([key, value]) => {
@@ -163,79 +164,6 @@ const HomeHeader = () => {
           </div>
         </div>
 
-        {/* <nav className="flex items-center gap-6 text-sm">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.name}
-                to={item.path}
-                className={`flex items-center px-3 py-2 rounded-md transition-colors duration-200
-                  ${
-                    isActive
-                      ? "bg-indigo-600 text-white"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-indigo-600"
-                  }
-                `}
-              >
-                {item.icon}
-                {item.name}
-              </Link>
-            );
-          })}
-
-          {loggedIn && userRole === "admin" && (
-            <>
-              <Link
-                to="/admin/orders"
-                className={`flex items-center px-3 py-2 rounded-md transition-colors duration-200
-                  ${
-                    location.pathname === "/admin/orders"
-                      ? "bg-red-600 text-white"
-                      : "text-red-600 hover:bg-red-50 font-semibold"
-                  }
-                `}
-              >
-                <FaClipboardList className="mr-2" />
-                Admin Orders
-              </Link>
-
-              <a
-                href="http://localhost:5173/admin/products/"
-                className={`flex items-center px-3 py-2 rounded-md transition-colors duration-200
-                  ${
-                    location.pathname === "/admin/products/new"
-                      ? "bg-indigo-600 text-white"
-                      : "text-indigo-600 hover:bg-indigo-50 font-semibold"
-                  }
-                `}
-              >
-                <FaClipboardList className="mr-2" />
-                Admin Product
-              </a>
-            </>
-          )}
-
-          {loggedIn && (
-            <div className="flex items-center gap-3 pl-3 border-l border-gray-300">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold text-xs">
-                  {userName.charAt(0).toUpperCase()}
-                </div>
-                <span className="text-gray-700 font-medium max-w-xs truncate">
-                  {userName}
-                </span>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="flex items-center px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 hover:text-indigo-600 transition-colors"
-              >
-                <FaSignInAlt className="mr-2 transform rotate-180" />
-                Logout
-              </button>
-            </div>
-          )}
-        </nav> */}
         <nav className="flex items-center gap-6 text-sm">
           {/* HOME */}
           <Link
@@ -307,13 +235,15 @@ const HomeHeader = () => {
                   <button
                     onClick={() =>
                       goWithQuery({
-                        type: ["t-shirt", "polo", "hoodie", "jacket"],
+                        group: "shirt",
+                        type: ["hoodie", "polo", "jacket", "t-shirt"],
                       })
                     }
-                    className="font-bold text-lg mb-4 hover:text-indigo-600 block w-full text-left"
+                    className="font-bold text-lg mb-4"
                   >
                     ÁO NAM
                   </button>
+
                   {megaMenu.shirt.map((i) => (
                     <button
                       key={i.label}
@@ -330,13 +260,15 @@ const HomeHeader = () => {
                   <button
                     onClick={() =>
                       goWithQuery({
+                        group: "pant",
                         type: ["pant", "short"],
                       })
                     }
-                    className="font-bold text-lg mb-4 hover:text-indigo-600 block w-full text-left"
+                    className="font-bold text-lg mb-4"
                   >
                     QUẦN NAM
                   </button>
+
                   {megaMenu.pant.map((i) => (
                     <button
                       key={i.label}

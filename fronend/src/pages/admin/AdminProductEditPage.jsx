@@ -182,6 +182,47 @@ const AdminProductEditPage = () => {
             placeholder="Giá"
           />
 
+          {/* TYPE */}
+          <div>
+            <label className="font-semibold block mb-2">Loại sản phẩm *</label>
+            <select
+              name="type"
+              value={form.type}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-lg"
+            >
+              <option value="">-- Chọn loại --</option>
+              {VALID_TYPES.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+            {errors.type && (
+              <p className="text-red-500 text-sm">{errors.type}</p>
+            )}
+          </div>
+
+          {/* STATUS */}
+          <div>
+            <label className="font-semibold block mb-2">Trạng thái *</label>
+            <div className="flex flex-wrap gap-3">
+              {VALID_STATUS.map((s) => (
+                <label key={s} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={form.status.includes(s)}
+                    onChange={() => toggleArray("status", s)}
+                  />
+                  <span className="capitalize">{s}</span>
+                </label>
+              ))}
+            </div>
+            {errors.status && (
+              <p className="text-red-500 text-sm">{errors.status}</p>
+            )}
+          </div>
+
           {/* MAIN IMAGE */}
           <div>
             <label className="font-semibold block mb-2">Ảnh chính *</label>
