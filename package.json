@@ -1,0 +1,22 @@
+{
+  "name": "clothing-shop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+  "start": "node src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duong0702/webQuanAo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/duong0702/webQuanAo/issues"
+  },
+  "homepage": "https://github.com/duong0702/webQuanAo#readme"
+}

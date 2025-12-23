@@ -30,10 +30,22 @@ app.use("/api/clothes", clothesRouter);
 app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
 
+// ===== SERVE FRONTEND (PRODUCTION) =====
+const frontendPath = path.join(__dirname, "../frontend/dist");
+
+app.use(express.static(frontendPath));
+
 // simple health check
 app.get("/", (req, res) =>
   res.send({ status: "ok", service: "clothing-backend" })
 );
+
+// SPA fallback (React Router)
+if (process.env.NODE_ENV === "production") {
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendPath, "index.html"));
+  });
+}
 
 connectDB()
   .then(() => {
