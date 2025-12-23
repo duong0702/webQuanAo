@@ -86,10 +86,15 @@ const HomeList = () => {
 
         const res =
           Object.keys(queryObj).length > 0
-            ? await axios.get("http://localhost:3000/api/clothes/search", {
-                params: queryObj,
-              })
-            : await axios.get("http://localhost:3000/api/clothes/all");
+            ? await axios.get(
+                `${import.meta.env.VITE_API_URL}/api/clothes/search`,
+                {
+                  params: queryObj,
+                }
+              )
+            : await axios.get(
+                `${import.meta.env.VITE_API_URL}/api/clothes/all`
+              );
 
         const normalized = (res.data?.clothes || []).map((r) => ({
           ...r,

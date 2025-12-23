@@ -48,9 +48,12 @@ const AdminProductEditPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`http://localhost:3000/api/clothes/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/clothes/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       const images = res.data.images || [];
       const main = images.find((i) => i.isMain);
@@ -140,7 +143,7 @@ const AdminProductEditPage = () => {
     oldDetailImages.forEach((img) => fd.append("oldDetailImages", img));
     detailImages.forEach((img) => fd.append("images", img));
 
-    await axios.put(`http://localhost:3000/api/clothes/${id}`, fd, {
+    await axios.put(`${import.meta.env.VITE_API_URL}/api/clothes/${id}`, fd, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",

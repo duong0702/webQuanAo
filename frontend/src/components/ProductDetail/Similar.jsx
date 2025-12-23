@@ -8,7 +8,9 @@ const Similar = ({ type }) => {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/clothes/all");
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/clothes/all`
+        );
         const all = res.data.clothes || [];
         setItems(all.filter((p) => p.type === type).slice(0, 6));
       } catch (err) {

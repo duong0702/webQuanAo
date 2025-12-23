@@ -33,7 +33,7 @@ const OrderDetailPage = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:3000/api/orders/${order._id}/cancel`,
+        `${import.meta.env.VITE_API_URL}/api/orders/${order._id}/cancel`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -51,9 +51,12 @@ const OrderDetailPage = () => {
         const token = localStorage.getItem("token");
         if (!token) return navigate("/login");
 
-        const res = await axios.get(`http://localhost:3000/api/orders/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/orders/${id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         setOrder(res.data);
       } catch (err) {

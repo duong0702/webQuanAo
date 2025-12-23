@@ -15,7 +15,9 @@ const ProductDetail = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/api/clothes/${id}`);
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/clothes/${id}`
+        );
         setProduct(res.data || res.data.clothes || null);
       } catch (err) {
         console.error(err);

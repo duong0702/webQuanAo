@@ -142,12 +142,16 @@ const AdminProductCreatePage = () => {
       form.images.forEach((img) => formData.append("images", img));
       formData.append("description", form.description.trim() || "");
 
-      await axios.post("http://localhost:3000/api/clothes", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/clothes`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       alert("Tạo sản phẩm thành công ✅");
       navigate("/admin/products");

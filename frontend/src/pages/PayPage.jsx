@@ -92,7 +92,7 @@ const PayPage = () => {
     try {
       setLoading(true);
       await axios.post(
-        "http://localhost:3000/api/orders",
+        `${import.meta.env.VITE_API_URL}/api/orders`,
         {
           orderItems,
           shippingAddress: { phone, address },

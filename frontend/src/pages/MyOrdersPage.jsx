@@ -19,11 +19,14 @@ const MyOrdersPage = () => {
 
     const fetchOrders = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/orders/my", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/orders/my`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setOrders(res.data);
       } catch (err) {
         console.error(err);
@@ -51,7 +54,7 @@ const MyOrdersPage = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:3000/api/orders/${orderId}/cancel`,
+        `${import.meta.env.VITE_API_URL}/api/orders/${orderId}/cancel`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -30,9 +30,12 @@ const AdminProductsPage = () => {
         const token = localStorage.getItem("token");
         if (!token) return navigate("/login");
 
-        const res = await axios.get("http://localhost:3000/api/clothes/all", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/clothes/all`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         const data = res.data?.clothes || res.data || [];
         setProducts(
@@ -58,7 +61,7 @@ const AdminProductsPage = () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`http://localhost:3000/api/clothes/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/clothes/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

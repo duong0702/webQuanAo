@@ -324,11 +324,11 @@ const HomeHeader = () => {
                 Admin Orders
               </Link>
 
-              <a
-                href="http://localhost:5173/admin/products/"
+              <Link
+                to="/admin/products/"
                 className={`flex items-center px-3 py-2 rounded-md transition-colors duration-200
           ${
-            location.pathname === "/admin/products/new"
+            location.pathname === "/admin/products/"
               ? "bg-indigo-600 text-white"
               : "text-indigo-600 hover:bg-indigo-50 font-semibold"
           }
@@ -336,7 +336,7 @@ const HomeHeader = () => {
               >
                 <FaClipboardList className="mr-2" />
                 Admin Product
-              </a>
+              </Link>
             </>
           )}
 

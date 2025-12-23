@@ -36,7 +36,7 @@ const AdminOrdersPage = () => {
         if (!token) return navigate("/login");
 
         const res = await axios.get(
-          "http://localhost:3000/api/orders/admin/all",
+          `${import.meta.env.VITE_API_URL}/api/orders/admin/all`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

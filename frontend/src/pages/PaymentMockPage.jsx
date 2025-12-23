@@ -12,7 +12,7 @@ const PaymentMockPage = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:3000/api/orders/${id}/pay`,
+        `${import.meta.env.VITE_API_URL}/api/orders/${id}/pay`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
