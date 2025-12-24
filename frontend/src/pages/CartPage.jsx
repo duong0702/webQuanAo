@@ -8,6 +8,7 @@ import StatsAndFilters from "@/components/Cart/StatsAndFilters";
 import ClothesListPagination from "@/components/Cart/ClothesListPagination";
 import { visibleClothesLimit } from "@/lib/data";
 import EmptyState from "@/components/EmptyState";
+import { SHIRT_TYPES, PANT_TYPES, classifyProductType } from "@/lib/constants";
 
 const CartPage = () => {
   const [cart, setCart] = useState([]);
@@ -58,30 +59,16 @@ const CartPage = () => {
 
   const pageSize = visibleClothesLimit || 5;
 
-  const classifyType = (item) => {
-    if (!item) return "unknown";
-    const cat = (item.category || item.type || item.name || "")
-      .toString()
-      .trim()
-      .toLowerCase();
-    const shirtTypes = ["hoodie", "polo", "jacket", "t-shirt"];
-    const pantTypes = ["pant", "short"];
-    if (cat && shirtTypes.some((t) => cat.includes(t))) return "shirt";
-    if (cat && pantTypes.some((t) => cat.includes(t))) return "pant";
-    return "unknown";
-  };
-
   const filtered = cart.filter((item) =>
-    filterKey === "all" ? true : classifyType(item) === filterKey
+    filterKey === "all" ? true : classifyProductType(item) === filterKey
   );
 
-  const shirtTypes = ["hoodie", "polo", "jacket", "t-shirt"];
-  const pantTypes = ["pant", "short"];
-
   const shirtCount = cart.filter((item) =>
-    shirtTypes.includes(item.type)
+    SHIRT_TYPES.includes(item.type)
   ).length;
-  const pantCount = cart.filter((item) => pantTypes.includes(item.type)).length;
+  const pantCount = cart.filter((item) =>
+    PANT_TYPES.includes(item.type)
+  ).length;
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const pageItems = filtered.slice((page - 1) * pageSize, page * pageSize);
@@ -237,7 +224,12 @@ const CartPage = () => {
           </div>
 
           <div className="mt-8 flex justify-between items-center">
-            <div className="text-xl font-bold">Tổng: {total}$</div>
+            <div className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-pink-500 bg-clip-text text-transparent">
+              Tổng tiền nếu bạn chốt đơn:{" "}
+              <span className="text-indigo-600 font-extrabold text-xl">
+                {total}$
+              </span>
+            </div>
 
             <div className="flex gap-3">
               <button

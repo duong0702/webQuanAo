@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import logo from "../../assets/logo.png";
 import {
   FaHome,
@@ -43,13 +44,8 @@ const HomeHeader = () => {
     });
 
     navigate(params.toString() ? `/?${params.toString()}` : "/");
-
-    setTimeout(() => {
-      const section = document.getElementById("product-list");
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    }, 200);
+    toast.success("Đang lọc sản phẩm...");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const [loggedIn, setLoggedIn] = useState(() => {
     return Boolean(
@@ -60,34 +56,7 @@ const HomeHeader = () => {
   const [userName, setUserName] = useState("");
   const [userRole, setUserRole] = useState("");
 
-  useEffect(() => {
-    const onStorage = () => {
-      setLoggedIn(
-        Boolean(localStorage.getItem("token") || localStorage.getItem("user"))
-      );
-      // Update user name and role
-      const userData = localStorage.getItem("user");
-      if (userData) {
-        try {
-          const user = JSON.parse(userData);
-          setUserName(user.name || "");
-          setUserRole(user.role || "");
-        } catch {
-          setUserName("");
-          setUserRole("");
-        }
-      }
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
-
-  // also update login state when route changes (same-tab login/logout)
-  useEffect(() => {
-    setLoggedIn(
-      Boolean(localStorage.getItem("token") || localStorage.getItem("user"))
-    );
-    // Update user name and role
+  const updateUserInfo = () => {
     const userData = localStorage.getItem("user");
     if (userData) {
       try {
@@ -99,6 +68,25 @@ const HomeHeader = () => {
         setUserRole("");
       }
     }
+  };
+
+  useEffect(() => {
+    const onStorage = () => {
+      setLoggedIn(
+        Boolean(localStorage.getItem("token") || localStorage.getItem("user"))
+      );
+      updateUserInfo();
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  // also update login state when route changes (same-tab login/logout)
+  useEffect(() => {
+    setLoggedIn(
+      Boolean(localStorage.getItem("token") || localStorage.getItem("user"))
+    );
+    updateUserInfo();
   }, [location]);
 
   const handleLogout = () => {
@@ -108,23 +96,23 @@ const HomeHeader = () => {
     navigate("/login");
   };
 
-  const navItems = loggedIn
-    ? [
-        { name: "Home", path: "/", icon: <FaHome className="mr-2" /> },
+  const navItems = [
+    { name: "Home", path: "/", icon: <FaHome className="mr-2" /> },
+    {
+      name: "Cart",
+      path: "/cart",
+      icon: <FaShoppingCart className="mr-2" />,
+    },
+    {
+      name: "My Orders",
+      path: "/my-orders",
+      icon: <FaClipboardList className="mr-2" />,
+    },
+  ];
 
-        {
-          name: "Cart",
-          path: "/cart",
-          icon: <FaShoppingCart className="mr-2" />,
-        },
-        {
-          name: "My Orders",
-          path: "/my-orders",
-          icon: <FaClipboardList className="mr-2" />,
-        },
-      ]
+  const additionalItems = loggedIn
+    ? []
     : [
-        { name: "Home", path: "/", icon: <FaHome className="mr-2" /> },
         {
           name: "Sign In",
           path: "/login",
@@ -289,10 +277,21 @@ const HomeHeader = () => {
             .filter((item) => item.name !== "Home")
             .map((item) => {
               const isActive = location.pathname === item.path;
+              const protectedItems = ["Cart", "My Orders"];
+
+              const handleClick = (e) => {
+                if (protectedItems.includes(item.name) && !loggedIn) {
+                  e.preventDefault();
+                  toast.error("Vui lòng đăng nhập để tiếp tục");
+                  navigate("/login");
+                }
+              };
+
               return (
                 <Link
                   key={item.name}
                   to={item.path}
+                  onClick={handleClick}
                   className={`flex items-center px-3 py-2 rounded-md transition-colors duration-200
             ${
               isActive
@@ -306,6 +305,27 @@ const HomeHeader = () => {
                 </Link>
               );
             })}
+
+          {/* Sign In - chỉ hiển thị khi chưa đăng nhập */}
+          {additionalItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <Link
+                key={item.name}
+                to={item.path}
+                className={`flex items-center px-3 py-2 rounded-md transition-colors duration-200
+            ${
+              isActive
+                ? "bg-indigo-600 text-white"
+                : "text-gray-700 hover:bg-gray-100 hover:text-indigo-600"
+            }
+          `}
+              >
+                {item.icon}
+                {item.name}
+              </Link>
+            );
+          })}
 
           {/* ⬇⬇⬇ GIỮ NGUYÊN 100% PHẦN DƯỚI ⬇⬇⬇ */}
 

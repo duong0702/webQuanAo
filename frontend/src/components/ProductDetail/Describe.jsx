@@ -40,6 +40,13 @@ const Describe = ({ product }) => {
 
   const addToCartHandler = () => {
     try {
+      // Check if user is logged in
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Vui lòng đăng nhập để thêm vào giỏ");
+        return;
+      }
+
       addToCart({
         product: product._id,
         name: product.name || product.brand || product.title || "Sản phẩm",
@@ -124,14 +131,12 @@ const Describe = ({ product }) => {
           <h2 className="text-3xl md:text-4xl font-extrabold">
             {product.name || product.brand || product.title || "Sản phẩm"}
           </h2>
-          <div className="text-gray-600 mt-2">{product.type}</div>
-          {product.size && product.size.length > 0 ? (
-            <div className="text-gray-600 mt-1">
-              {(product.size || [])
-                .map((s) => s.toString().toUpperCase())
-                .join(" - ")}
-            </div>
-          ) : null}
+          <div className="text-gray-600 mt-2">
+            Sản phẩm còn những size:{" "}
+            {product.size && product.size.length > 0
+              ? product.size.map((s) => s.toString().toUpperCase()).join(", ")
+              : "Không có"}
+          </div>
 
           <div
             className={`font-bold text-2xl md:text-3xl mt-4 transition-colors duration-300 ${

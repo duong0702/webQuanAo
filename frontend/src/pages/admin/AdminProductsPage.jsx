@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
-  FaSort,
   FaSortAmountUp,
   FaSortAmountDown,
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
+import { ChevronDown } from "lucide-react";
 import HomeHeader from "@/components/Home/HomeHeader";
 import HomeFooter from "@/components/Home/HomeFooter";
 
@@ -108,18 +108,26 @@ const AdminProductsPage = () => {
       <HomeHeader />
 
       <main className="flex-1 max-w-6xl mx-auto p-6 w-full">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">🛍 Quản lý sản phẩm</h1>
+        <h1 className="text-3xl font-bold mb-2">🛍 Quản lý sản phẩm</h1>
+        <p className="text-gray-600 text-sm mb-6">
+          Tổng cộng:{" "}
+          <span className="font-semibold text-indigo-600">
+            {products.length}
+          </span>{" "}
+          sản phẩm
+        </p>
+
+        <div className="flex justify-end mb-6">
           <button
             onClick={() => navigate("/admin/products/new")}
-            className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
           >
             + Thêm sản phẩm
           </button>
         </div>
 
         <div className="bg-white rounded-xl shadow overflow-x-auto relative">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" style={{ tableLayout: "fixed" }}>
             <thead className="bg-gray-50">
               <tr>
                 <th className="p-4 text-left">Ảnh</th>
@@ -131,8 +139,8 @@ const AdminProductsPage = () => {
                 >
                   <div className="flex items-center gap-2">
                     Giá
-                    {priceSort === "default" && <FaSort />}
-                    {priceSort === "newest" && <FaSort />}
+                    {priceSort === "default" && <ChevronDown size={16} />}
+                    {priceSort === "newest" && <ChevronDown size={16} />}
                     {priceSort === "asc" && <FaSortAmountUp />}
                     {priceSort === "desc" && <FaSortAmountDown />}
                   </div>
@@ -145,7 +153,7 @@ const AdminProductsPage = () => {
                       className="text-gray-500 hover:text-gray-700"
                       onClick={() => setShowTypeDropdown((prev) => !prev)}
                     >
-                      <FaSort />
+                      <ChevronDown size={16} />
                     </button>
                   </div>
 
@@ -156,7 +164,7 @@ const AdminProductsPage = () => {
                           setTypeSort("default");
                           setShowTypeDropdown(false);
                         }}
-                        className="block w-full px-3 py-2 text-left hover:bg-gray-100 rounded"
+                        className="block w-full px-3 py-2 text-left hover:bg-gray-100 rounded text-gray-500"
                       >
                         Mặc định
                       </button>
@@ -175,7 +183,7 @@ const AdminProductsPage = () => {
                             setTypeSort(t);
                             setShowTypeDropdown(false);
                           }}
-                          className="block w-full px-3 py-2 text-left hover:bg-gray-100 rounded capitalize"
+                          className="block w-full px-3 py-2 text-left hover:bg-gray-100 rounded text-gray-500"
                         >
                           {t}
                         </button>
@@ -202,9 +210,7 @@ const AdminProductsPage = () => {
                     />
                   </td>
 
-                  <td className="p-4 font-medium max-w-xs truncate">
-                    {p.name}
-                  </td>
+                  <td className="p-4 font-medium break-words">{p.name}</td>
 
                   <td className="p-4 font-bold text-indigo-600">
                     {p.price.toLocaleString()}$

@@ -172,6 +172,11 @@ export const CATEGORY_CONFIG = {
     thumb:
       "https://images.unsplash.com/photo-1596574197254-1d6710b7063a?w=400&fit=crop",
     description: "Những sản phẩm mới nhất vừa được cập nhật tại cửa hàng.",
+    longDescription: [
+      "MEFAGHION liên tục cập nhật những mẫu áo quần mới nhất từ các xu hướng thời trang quốc tế, mang đến cho khách hàng những lựa chọn tươi mới và hiện đại.",
+      "Mỗi sản phẩm mới được chọn lọc kỹ lưỡng, đảm bảo chất lượng cao, thiết kế ấn tượng và phù hợp với phong cách thời trang hiện nay.",
+      "Hãy khám phá những mẫu quần áo mới sôi động, tô điểm cho tủ đồ của bạn với những item trending hiện tại.",
+    ],
   },
 
   hot: {
@@ -183,6 +188,11 @@ export const CATEGORY_CONFIG = {
     thumb:
       "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=400&fit=crop",
     description: "Các sản phẩm bán chạy và được đánh giá cao.",
+    longDescription: [
+      "Những sản phẩm hàng bán chạy nhất tại MEFAGHION - những item mà hàng nghìn khách hàng đã lựa chọn và yêu thích.",
+      "Chất lượng đã được kiểm chứng, thiết kế được các tín đồ thời trang ưa chuộng, và mức giá hợp lý với chất lượng.",
+      "Nếu bạn còn phân vân, hãy chọn những sản phẩm bán chạy - những item mà hàng ngàn người dùng khác đã tin tưởng.",
+    ],
   },
 
   sale: {
@@ -194,5 +204,26 @@ export const CATEGORY_CONFIG = {
     thumb:
       "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400&fit=crop",
     description: "Săn sale cực đã với mức giảm giá lên tới 50%.",
+    longDescription: [
+      "MEFAGHION OUTLET - Cơ hội vàng để sở hữu những sản phẩm chất lượng cao với giá cả tuyệt vời, giảm giá lên tới 50%.",
+      "Tất cả các sản phẩm trong OUTLET đều là hàng chính hãng, chất lượng đảm bảo nhưng được giảm giá để dành cho các khách hàng thân thiết.",
+      "Đừng bỏ lỡ cơ hội này - các sản phẩm sale sẽ nhanh chóng hết hàng, vì vậy hãy nhanh tay lựa chọn những item yêu thích của bạn ngay hôm nay.",
+    ],
+  },
+
+  limited: {
+    key: "limited",
+    title: "Sản phẩm giới hạn",
+    subtitle: "Hàng độc – Số lượng có hạn",
+    bannerImage:
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600",
+    thumb:
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&fit=crop",
+    description: "Những sản phẩm giới hạn, độc quyền chỉ có tại MEFAGHION.",
+    longDescription: [
+      "Những sản phẩm giới hạn từ MEFAGHION - những item độc bản, được sản xuất với số lượng giới hạn, mang lại sự độc đáo cho phong cách cá nhân.",
+      "Mỗi sản phẩm giới hạn đều là sự kết hợp tài tình giữa thiết kế cao cấp, chất liệu tốt nhất và số lượng hạn chế để tạo nên giá trị đặc biệt.",
+      "Nếu bạn muốn nổi bật và sở hữu những item mà không phải ai cũng có, hãy lựa chọn những sản phẩm giới hạn của MEFAGHION - bởi khi hết, không có sản phẩm thay thế.",
+    ],
   },
 };

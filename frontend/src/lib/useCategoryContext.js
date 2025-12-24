@@ -17,6 +17,7 @@ export const useCategoryContext = () => {
       isAll: false,
       config: CATEGORY_CONFIG.shirtGroup,
       showSubNav: true,
+      currentType: type,
     };
   }
 
@@ -25,16 +26,18 @@ export const useCategoryContext = () => {
       isAll: false,
       config: CATEGORY_CONFIG.pantGroup,
       showSubNav: true,
+      currentType: type,
     };
   }
 
-  /* ================= TYPE (ITEM) ================= */
+  /* ================= TYPE (ITEM) - Không hiển thị sub-nav nếu không có group ================= */
 
   if (type && CATEGORY_CONFIG[type]) {
     return {
       isAll: false,
       config: CATEGORY_CONFIG[type],
       showSubNav: false,
+      currentType: type,
     };
   }
 
