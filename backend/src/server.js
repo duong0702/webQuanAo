@@ -7,53 +7,55 @@ import { fileURLToPath } from "url";
 import clothesRouter from "./routes/clothesRouters.js";
 import authRoutes from "./routes/authRouters.js";
 import orderRoutes from "./routes/orderRouters.js";
+// import uploadRoute from "./controllers/routeUpload.js";
 import { connectDB } from "./config/db.js";
-
-// ====== INIT ======
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || "0.0.0.0";
 
-// ====== LOG ENV (DEBUG) ======
 console.log("Mongo URI:", process.env.MONGODB_CONNECTIONSTRING);
 console.log("Cloudinary key:", process.env.CLOUDINARY_API_KEY);
-console.log("NODE_ENV:", process.env.NODE_ENV);
 
-// ====== MIDDLEWARE ======
 app.use(
   cors({
-    origin: "https://webquanao-liqd.onrender.com",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: [
+      process.env.FRONTEND_URL || "http://localhost:5173",
+      "http://localhost:3000",
+      "http://localhost:5173",
+    ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-app.options("*", cors()); // cho phép mọi origin (OK cho Render)
 app.use(express.json());
 
-// ====== API ROUTES ======
+// app.use("/api/upload", uploadRoute);
 app.use("/api/clothes", clothesRouter);
 app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
 
-// ====== SERVE FRONTEND (PRODUCTION ONLY) ======
-// if (process.env.NODE_ENV === "production") {
-//   const frontendPath = path.resolve(__dirname, "../../frontend/dist");
+// ===== SERVE FRONTEND (PRODUCTION) =====
+const frontendPath = path.resolve(__dirname, "../../frontend/dist");
 
-//   // Serve static files
-//   app.use(express.static(frontendPath));
+app.use(express.static(frontendPath));
 
-//   app.get(/^\/(?!api).*/, (req, res) => {
-//     res.sendFile(path.join(frontendPath, "index.html"));
-//   });
-// }
+// SPA fallback (React Router)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
+});
 
-// ====== START SERVER ======
+// SPA fallback (React Router)
+if (process.env.NODE_ENV === "production") {
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendPath, "index.html"));
+  });
+}
+
 connectDB()
   .then(() => {
     app
