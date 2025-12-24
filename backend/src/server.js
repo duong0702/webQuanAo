@@ -22,7 +22,18 @@ const HOST = process.env.HOST || "0.0.0.0";
 console.log("Mongo URI:", process.env.MONGODB_CONNECTIONSTRING);
 console.log("Cloudinary key:", process.env.CLOUDINARY_API_KEY);
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      process.env.FRONTEND_URL || "http://localhost:5173",
+      "http://localhost:3000",
+      "http://localhost:5173",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 
 // app.use("/api/upload", uploadRoute);

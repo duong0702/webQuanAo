@@ -103,7 +103,8 @@ export const forgotPassword = async (req, res) => {
     user.resetPasswordExpire = Date.now() + 15 * 60 * 1000; // 15 phút
     await user.save();
 
-    const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
 
     // ===== DEV MODE =====
     console.log("🔐 RESET PASSWORD LINK:", resetLink);
