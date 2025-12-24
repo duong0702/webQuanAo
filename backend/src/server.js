@@ -4,50 +4,53 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 
+import clothesRouter from "./routes/clothesRouters.js";
+import authRoutes from "./routes/authRouters.js";
+import orderRoutes from "./routes/orderRouters.js";
+import { connectDB } from "./config/db.js";
+
+// ====== INIT ======
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
-import clothesRouter from "./routes/clothesRouters.js";
-import authRoutes from "./routes/authRouters.js";
-import orderRoutes from "./routes/orderRouters.js";
-// import uploadRoute from "./controllers/routeUpload.js";
-import { connectDB } from "./config/db.js";
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || "0.0.0.0";
 
+// ====== LOG ENV (DEBUG) ======
 console.log("Mongo URI:", process.env.MONGODB_CONNECTIONSTRING);
 console.log("Cloudinary key:", process.env.CLOUDINARY_API_KEY);
-console.log("Frontend URL:", process.env.FRONTEND_URL);
+console.log("NODE_ENV:", process.env.NODE_ENV);
 
-app.use(cors());
+// ====== MIDDLEWARE ======
+app.use(cors()); // cho phép mọi origin (OK cho Render)
 app.use(express.json());
 
-// app.use("/api/upload", uploadRoute);
+// ====== API ROUTES ======
 app.use("/api/clothes", clothesRouter);
 app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
 
-// ===== SERVE FRONTEND (PRODUCTION) =====
-const frontendPath = path.resolve(__dirname, "../../frontend/dist");
-
-app.use(express.static(frontendPath));
-
-// SPA fallback (React Router)
-app.get("*", (req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
-});
-
-// SPA fallback (React Router)
+// ====== SERVE FRONTEND (PRODUCTION ONLY) ======
 if (process.env.NODE_ENV === "production") {
-  app.get("*", (req, res) => {
+  const frontendPath = path.resolve(__dirname, "../../frontend/dist");
+
+  // Serve static files
+  app.use(express.static(frontendPath));
+
+  /**
+   * ❗ RẤT QUAN TRỌNG
+   * Chỉ fallback cho route KHÔNG bắt đầu bằng /api
+   * Tránh React Router nuốt API → lỗi CORS / 404
+   */
+  app.get(/^\/(?!api).*/, (req, res) => {
     res.sendFile(path.join(frontendPath, "index.html"));
   });
 }
 
+// ====== START SERVER ======
 connectDB()
   .then(() => {
     app
