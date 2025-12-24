@@ -1,4 +1,3 @@
-// src/models/User.js
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
@@ -28,6 +27,10 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+
+    // ===== FORGOT PASSWORD (DEV MODE) =====
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
   {
     timestamps: true,

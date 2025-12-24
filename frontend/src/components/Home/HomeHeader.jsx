@@ -13,6 +13,7 @@ const megaMenu = {
     { label: "Sản phẩm mới", query: { status: "new" } },
     { label: "Hàng bán chạy", query: { status: "hot" } },
     { label: "OUTLET - Sale up to 50%", query: { status: "sale" } },
+    { label: "Sản phẩm giới hạn", query: { status: "limited" } },
   ],
   shirt: [
     { label: "Áo Thun", query: { type: "t-shirt" } },
@@ -342,7 +343,10 @@ const HomeHeader = () => {
 
           {loggedIn && (
             <div className="flex items-center gap-3 pl-3 border-l border-gray-300">
-              <div className="flex items-center gap-2">
+              <div
+                onClick={() => navigate("/profile")}
+                className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition"
+              >
                 <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold text-xs">
                   {userName.charAt(0).toUpperCase()}
                 </div>
