@@ -35,7 +35,6 @@ app.use("/api/orders", orderRoutes);
 const frontendPath = path.resolve(__dirname, "../../frontend/dist");
 
 app.use(express.static(frontendPath));
-cd;
 
 // SPA fallback (React Router)
 app.get("*", (req, res) => {
