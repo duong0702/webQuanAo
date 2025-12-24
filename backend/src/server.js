@@ -25,7 +25,15 @@ console.log("Cloudinary key:", process.env.CLOUDINARY_API_KEY);
 console.log("NODE_ENV:", process.env.NODE_ENV);
 
 // ====== MIDDLEWARE ======
-app.use(cors()); // cho phép mọi origin (OK cho Render)
+app.use(
+  cors({
+    origin: "https://webquanao-liqd.onrender.com",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
+app.options("*", cors()); // cho phép mọi origin (OK cho Render)
 app.use(express.json());
 
 // ====== API ROUTES ======
@@ -34,21 +42,16 @@ app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
 
 // ====== SERVE FRONTEND (PRODUCTION ONLY) ======
-if (process.env.NODE_ENV === "production") {
-  const frontendPath = path.resolve(__dirname, "../../frontend/dist");
+// if (process.env.NODE_ENV === "production") {
+//   const frontendPath = path.resolve(__dirname, "../../frontend/dist");
 
-  // Serve static files
-  app.use(express.static(frontendPath));
+//   // Serve static files
+//   app.use(express.static(frontendPath));
 
-  /**
-   * ❗ RẤT QUAN TRỌNG
-   * Chỉ fallback cho route KHÔNG bắt đầu bằng /api
-   * Tránh React Router nuốt API → lỗi CORS / 404
-   */
-  app.get(/^\/(?!api).*/, (req, res) => {
-    res.sendFile(path.join(frontendPath, "index.html"));
-  });
-}
+//   app.get(/^\/(?!api).*/, (req, res) => {
+//     res.sendFile(path.join(frontendPath, "index.html"));
+//   });
+// }
 
 // ====== START SERVER ======
 connectDB()
